@@ -1,0 +1,42 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Checkout the repository
+      - uses: actions/checkout@v3
+
+      # 2) Install .NET 8 SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      # 3) Restore & build all projects
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
+      # 4) Run tests in NerdAcademy.Tests
+      - name: Run tests
+        run: dotnet test NerdAcademy.Tests/NerdAcademy.Tests.csproj --configuration Release --no-build --verbosity normal
+
+      # 5) (Optional) Install EF Core CLI for migrations
+      - name: Install EF Core tool
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.* 
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      # 6) (Optional) Apply any EF migrations to your SQLite database
+      - name: Apply EF Core migrations
+        run: dotnet ef database update --project NerdAcademy.Data/NerdAcademy.Data.csproj --startup-project NerdAcademy.API/NerdAcademy.API.csproj --configuration Release
