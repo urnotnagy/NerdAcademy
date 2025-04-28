@@ -5,7 +5,7 @@ using NerdAcademy.Data.Entities;
 using System;
 
 
-namespace NerdAcademy.Api.Mapping
+namespace NerdAcademy.API.Mapping
 {
     public class UserProfile : Profile
     {

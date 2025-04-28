@@ -1,6 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
-using NerdAcademy.Api.Mapping;
+using NerdAcademy.API.Mapping;
 using NerdAcademy.Business.Interfaces;
 using NerdAcademy.Business.Services;
 using NerdAcademy.Data;
@@ -29,7 +29,7 @@ namespace NerdAcademy.API
 
 
             // register AutoMapper and scan our Mapping folder
-            builder.Services.AddAutoMapper(typeof(UserProfile));
+            builder.Services.AddAutoMapper(typeof(UserProfile), typeof(CourseProfile), typeof(EnrollmentProfile));
 
 
             builder.Services.AddScoped<IUserService, UserService>();
