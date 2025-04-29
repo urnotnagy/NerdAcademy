@@ -22,6 +22,27 @@ namespace NerdAcademy.API.Mapping
                 .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level.ToString()))
                 .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
                 .ForMember(d => d.TagIds, opt => opt.MapFrom(s => s.Tags.Select(t => t.Id).ToList()));
+
+
+            // Update mapping for PATCH-style partial updates
+            CreateMap<CourseUpdateDto, Course>()
+                // Only map Level when provided
+                .ForMember(dest => dest.Level, opt =>
+                {
+                    opt.Condition(src => src.Level.HasValue);
+                    opt.MapFrom(src => (CourseLevel)src.Level!.Value);
+                })
+                // Only map Status when provided
+                .ForMember(dest => dest.Status, opt =>
+                {
+                    opt.Condition(src => src.Status.HasValue);
+                    opt.MapFrom(src => (CourseStatus)src.Status!.Value);
+                })
+                // For all other members, only map non-null values
+                .ForAllMembers(opt =>
+                    opt.Condition((src, dest, srcMember) => srcMember != null));
+
+
         }
     }
 }

@@ -26,4 +26,16 @@
         public DateTime CreatedAt { get; set; }
         public List<Guid> TagIds { get; set; }
     }
+
+    public class CourseUpdateDto
+    {
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
+        public int? DurationInWeeks { get; set; }
+        public int? Level { get; set; }
+        public int? Status { get; set; }
+        public List<Guid>? TagIds { get; set; }
+    }
+
 }

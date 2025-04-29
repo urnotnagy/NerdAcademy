@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -96,6 +98,25 @@ namespace NerdAcademy.Tests.Controllers
             });
             Assert.Equal(HttpStatusCode.Forbidden, resp.StatusCode);
         }
+
+        [Fact]
+        public async Task Debug_TokenSubClaim_EqualsRegisteredUserId()
+        {
+            // 1) Register & login
+            var (token, userId) = await RegisterAndGetTokenAsync("Student");
+
+            // 2) Decode the raw JWT
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+
+            // 3) Pull out the 'sub' claim
+            var subClaim = jwt.Claims
+                .FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            // 4) Assert it matches the userId
+            Assert.Equal(userId.ToString(), subClaim);
+        }
+
 
         [Fact]
         public async Task Create_AsStudent_And_GetAll_And_GetById_Succeeds()

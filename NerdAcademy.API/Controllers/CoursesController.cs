@@ -72,19 +72,38 @@ namespace NerdAcademy.API.Controllers
             return Ok(_mapper.Map<CourseReadDto>(c));
         }
 
-        // only Instructor or Admin can update
+
+
+        // PUT /api/courses/{id}
         [HttpPut("{id:guid}"), Authorize(Roles = "Instructor,Admin")]
-        public async Task<IActionResult> Update(Guid id, Course course)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Update(
+            Guid id,
+            [FromBody] CourseUpdateDto dto)
         {
-            if (id != course.Id) return BadRequest();
-            await _svc.UpdateAsync(course);
+            var existing = await _svc.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            // map the updated fields + tags
+            _mapper.Map(dto, existing);
+
+            await _svc.UpdateAsync(existing);
             return NoContent();
         }
 
-        // only Instructor or Admin can delete
+        // DELETE /api/courses/{id}
         [HttpDelete("{id:guid}"), Authorize(Roles = "Instructor,Admin")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(Guid id)
         {
+            var existing = await _svc.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound();
+
             await _svc.DeleteAsync(id);
             return NoContent();
         }
