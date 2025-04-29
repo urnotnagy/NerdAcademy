@@ -29,8 +29,14 @@ namespace NerdAcademy.API
 
 
             // register AutoMapper and scan our Mapping folder
-            builder.Services.AddAutoMapper(typeof(UserProfile), typeof(CourseProfile), typeof(EnrollmentProfile), typeof(LessonProfile), typeof(TagProfile));
-
+            builder.Services.AddAutoMapper(
+                typeof(UserProfile),
+                typeof(CourseProfile),
+                typeof(EnrollmentProfile),
+                typeof(LessonProfile),
+                typeof(TagProfile),
+                typeof(PaymentProfile)     
+            );
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITagService, TagService>();
