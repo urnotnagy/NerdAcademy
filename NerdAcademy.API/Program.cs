@@ -7,6 +7,8 @@ using NerdAcademy.Data;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
 
 namespace NerdAcademy.API
 {
@@ -70,6 +72,21 @@ namespace NerdAcademy.API
                         ClockSkew = TimeSpan.FromMinutes(1)
                     };
                 });
+
+
+            // Configure Serilog
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
+
+
 
             var app = builder.Build();
 

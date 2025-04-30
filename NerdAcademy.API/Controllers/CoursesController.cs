@@ -60,6 +60,7 @@ namespace NerdAcademy.API.Controllers
         {
             var list = await _svc.GetAllAsync();
             return Ok(_mapper.Map<CourseReadDto[]>(list));
+
         }
 
         // GET /api/courses/{id}
