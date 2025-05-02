@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
+using Microsoft.Win32;
 
 namespace NerdAcademy.API
 {
@@ -85,6 +86,15 @@ namespace NerdAcademy.API
 
             builder.Host.UseSerilog();
 
+            // Register CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                    policy.AllowAnyOrigin()       // in prod, lock this down to your frontend domain
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                );
+            });
 
 
 
@@ -96,6 +106,9 @@ namespace NerdAcademy.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors();
+
 
             app.UseHttpsRedirection();
 
