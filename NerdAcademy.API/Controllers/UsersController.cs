@@ -39,12 +39,22 @@ namespace Api.Controllers
             return Ok(_mapper.Map<IEnumerable<UserReadDto>>(users));
         }
 
-        [HttpGet("{id:guid}"), Authorize(Roles = "Admin")]
+        [HttpGet("{id:guid}")]
+        [Authorize]           
         public async Task<ActionResult<UserReadDto>> GetById(Guid id)
         {
-            var u = await _svc.GetByIdAsync(id);
-            if (u == null) return NotFound();
-            return Ok(_mapper.Map<UserReadDto>(u));
+            var user = await _svc.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // who is calling?
+            var callerId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var callerRole = User.FindFirstValue(ClaimTypes.Role);
+
+            // if not admin AND not asking for their own record → FORBID
+            if (callerRole != "Admin" && callerId != id)
+                return Forbid();
+
+            return Ok(_mapper.Map<UserReadDto>(user));
         }
 
         [HttpPost("register"), AllowAnonymous]

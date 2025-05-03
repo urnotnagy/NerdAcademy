@@ -29,29 +29,33 @@ namespace NerdAcademy.API.Controllers
         [HttpPost, Authorize(Roles = "Instructor,Admin")]
         public async Task<ActionResult<CourseReadDto>> Create(CourseCreateDto dto)
         {
-            // 1) get instructorId from JWT sub claim
             var instructorId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // 2) map dto → entity
             var course = _mapper.Map<Course>(dto);
             course.InstructorId = instructorId;
             course.CreatedAt = DateTime.UtcNow;
 
-            // 3) handle tags join
-            if (dto.TagIds.Any())
-            {
-                course.Tags = dto.TagIds
-                    .Select(id => new Tag { Id = id })
-                    .ToList();
-            }
+            // pass dto.TagIds into service instead of new Tag {Id}
+            var created = await _svc.CreateAsync(course, dto.TagIds);
 
-            // 4) save
-            var created = await _svc.CreateAsync(course);
-
-            // 5) return read dto
             var resultDto = _mapper.Map<CourseReadDto>(created);
             return CreatedAtAction(nameof(GetById), new { id = resultDto.Id }, resultDto);
         }
+
+        // PUT /api/courses/{id}
+        [HttpPut("{id:guid}"), Authorize(Roles = "Instructor,Admin")]
+        public async Task<IActionResult> Update(
+            Guid id,
+            [FromBody] CourseUpdateDto dto)
+        {
+            // load the DTO into a Course instance for scalar props
+            var course = _mapper.Map<Course>(dto);
+            course.Id = id;
+
+            // delegate to service, passing the TagIds
+            await _svc.UpdateAsync(course, dto.TagIds);
+            return NoContent();
+        }
+
 
         // GET /api/courses
         [HttpGet]
@@ -75,25 +79,7 @@ namespace NerdAcademy.API.Controllers
 
 
 
-        // PUT /api/courses/{id}
-        [HttpPut("{id:guid}"), Authorize(Roles = "Instructor,Admin")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> Update(
-            Guid id,
-            [FromBody] CourseUpdateDto dto)
-        {
-            var existing = await _svc.GetByIdAsync(id);
-            if (existing == null)
-                return NotFound();
 
-            // map the updated fields + tags
-            _mapper.Map(dto, existing);
-
-            await _svc.UpdateAsync(existing);
-            return NoContent();
-        }
 
         // DELETE /api/courses/{id}
         [HttpDelete("{id:guid}"), Authorize(Roles = "Instructor,Admin")]

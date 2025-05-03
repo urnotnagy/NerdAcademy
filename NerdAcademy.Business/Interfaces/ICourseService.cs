@@ -11,8 +11,8 @@ namespace NerdAcademy.Business.Interfaces
     {
         Task<IEnumerable<Course>> GetAllAsync();
         Task<Course> GetByIdAsync(Guid id);
-        Task<Course> CreateAsync(Course course);
-        Task UpdateAsync(Course course);
+        Task<Course> CreateAsync(Course course, IEnumerable<Guid> tagIds);
+        Task UpdateAsync(Course course, IEnumerable<Guid> tagIds);
         Task DeleteAsync(Guid id);
     }
 }

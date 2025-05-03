@@ -28,7 +28,8 @@ namespace NerdAcademy.Tests.Services
                 InstructorId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow
             };
-            var created = await svc.CreateAsync(course);
+            var created = await svc.CreateAsync(course, Array.Empty<Guid>());
+
 
             Assert.NotEqual(Guid.Empty, created.Id);
             Assert.Equal("Test", (await db.Courses.FindAsync(created.Id)).Title);
