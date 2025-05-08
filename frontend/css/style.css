@@ -1,127 +1,175 @@
+:root {
+    --primary-color: #FF7F50; /* Bright Coral */
+    --secondary-color: #00BFFF; /* Deep Sky Blue */
+    --accent-color: #FFD700; /* Gold */
+    --light-neutral: #F8F8F8; /* Very Light Grey */
+    --dark-neutral: #2F4F4F; /* Dark Slate Gray */
+
+    --success-bg: #D4EDDA;
+    --success-text: #155724;
+    --success-border: #C3E6CB;
+
+    --error-bg: #F8D7DA;
+    --error-text: #721C24;
+    --error-border: #F5C6CB;
+
+    --info-bg: #D1ECF1;
+    --info-text: #0C5460;
+    --info-border: #BEE5EB;
+
+    --font-heading: 'Arial', sans-serif; /* Placeholder, can be updated */
+    --font-body: 'Arial', sans-serif; /* Placeholder, can be updated */
+}
 body {
-    font-family: sans-serif;
+    font-family: var(--font-body);
     margin: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--light-neutral);
+    color: var(--dark-neutral);
 }
 
 header {
-    background-color: #333;
-    color: white;
-    padding: 1em 0;
+    background-color: var(--primary-color);
+    color: var(--light-neutral); /* Ensuring text is readable on primary color */
+    padding: 1.5em 0; /* Slightly increased padding */
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adding a subtle shadow */
 }
 
 header h1 {
     margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 700; /* Bolder heading */
 }
 
 nav ul {
     list-style-type: none;
     padding: 0;
     text-align: center;
+    margin-top: 0.5em; /* Added some space between h1 and nav */
 }
 
 nav ul li {
     display: inline;
-    margin-right: 20px;
+    margin: 0 15px; /* Adjusted margin */
 }
 
 nav ul li a {
-    color: white;
+    color: var(--light-neutral);
     text-decoration: none;
+    font-weight: 500; /* Slightly bolder nav links */
+    padding: 0.5em 0.75em; /* Added padding for a button-like feel */
+    border-radius: 4px; /* Rounded corners for links */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
-nav ul li a:hover {
-    text-decoration: underline;
+nav ul li a:hover,
+nav ul li a:focus { /* Added focus state for accessibility */
+    background-color: var(--secondary-color); /* Using secondary for hover */
+    color: var(--light-neutral);
+    text-decoration: none; /* Remove underline on hover if background changes */
 }
 
 main {
     flex-grow: 1;
-    padding: 20px;
-    max-width: 1200px; /* Increased max-width for better space utilization */
-    width: 90%; /* Use a percentage for responsiveness */
-    margin: 20px auto;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 8px; /* Added some rounding */
+    padding: 25px; /* Increased padding */
+    max-width: 1200px;
+    width: 90%;
+    margin: 30px auto; /* Increased margin */
+    background-color: #ffffff; /* Kept white for now, can be light neutral too */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Enhanced shadow */
+    border-radius: 12px; /* More pronounced rounding */
 }
 
 /* Styles for course listings to make them more card-like and responsive */
 .course-list {
     list-style: none;
     padding: 0;
-    display: flex; /* Use flexbox for layout */
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
-    gap: 20px; /* Space between cards */
-    justify-content: center; /* Center cards if they don't fill the row */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* Increased gap */
+    justify-content: center;
 }
 
 .course-list li {
-    border: 1px solid #ddd;
-    margin-bottom: 10px; /* Retained for spacing if not using gap effectively */
-    padding: 20px; /* Increased padding */
-    border-radius: 8px; /* Rounded corners for cards */
-    background-color: #f9f9f9; /* Slight background for cards */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    width: calc(33.333% - 20px); /* Aim for 3 cards per row, adjusting for gap */
-    min-width: 280px; /* Minimum width for smaller screens / fewer items */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    border: 1px solid var(--light-neutral); /* Softer border, or use accent color subtly */
+    padding: 25px; /* Increased padding */
+    border-radius: 12px; /* More rounding */
+    background-color: #ffffff; /* White background for cards to pop */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Enhanced shadow for depth */
+    width: calc(33.333% - 25px); /* Adjusting for new gap */
+    min-width: 300px; /* Slightly larger min-width */
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column; /* Stack content vertically within the card */
-    justify-content: space-between; /* Push button to the bottom */
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+}
+
+.course-list li:hover {
+    transform: translateY(-5px); /* Lift card on hover */
+    box-shadow: 0 8px 20px rgba(var(--primary-color), 0.2); /* Shadow with primary color tint */
 }
 
 .course-list li h3 {
     margin-top: 0;
-    color: #0056b3; /* Theme color for headings */
+    margin-bottom: 10px; /* Added margin bottom */
+    color: var(--primary-color);
+    font-family: var(--font-heading);
+    font-size: 1.4em; /* Larger title */
 }
 
 .course-list li p {
-    flex-grow: 1; /* Allow description to take available space */
-    margin-bottom: 15px;
+    flex-grow: 1;
+    margin-bottom: 20px; /* Increased margin */
+    line-height: 1.6; /* Improved readability */
+    color: var(--dark-neutral);
 }
 
 
 /* Ensure course detail container also uses space well */
 .course-detail-container {
-    padding: 25px; /* Increased padding */
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 30px; /* Further increased padding */
+    border: 1px solid var(--light-neutral); /* Consistent border */
+    border-radius: 12px; /* Consistent rounding */
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Consistent shadow */
+    margin-top: 20px; /* Added margin for separation */
 }
 
 
 footer {
-    background-color: #333;
-    color: white;
+    background-color: var(--dark-neutral);
+    color: var(--light-neutral);
     text-align: center;
-    padding: 1em 0;
+    padding: 1.5em 0; /* Increased padding */
     margin-top: auto;
+    font-size: 0.9em;
 }
 
 /* Basic styles for course listings */
 /* Basic styles for forms */
-form { /* Add some styling to forms themselves */
-    max-width: 600px; /* Limit form width */
-    margin: 20px auto; /* Center forms */
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+form {
+    max-width: 600px;
+    margin: 30px auto; /* Increased margin */
+    padding: 25px; /* Increased padding */
+    background-color: #ffffff; /* Brighter background for form */
+    border-radius: 12px; /* More rounding */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Slightly enhanced shadow */
+    border: 1px solid var(--light-neutral); /* Subtle border */
 }
 
 form div {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased spacing */
 }
 
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px; /* Increased spacing */
+    font-weight: 600; /* Bolder labels */
+    color: var(--dark-neutral);
 }
 
 form input[type="text"],
@@ -130,23 +178,43 @@ form input[type="password"],
 form input[type="number"],
 form textarea,
 form select {
-    width: calc(100% - 22px); /* Account for padding and border */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: calc(100% - 24px); /* Adjusted for padding */
+    padding: 12px; /* Increased padding */
+    border: 1px solid #ddd; /* Softer border */
+    border-radius: 6px; /* Slightly more rounding */
+    font-family: var(--font-body);
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="number"]:focus,
+form textarea:focus,
+form select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2); /* Focus ring with primary color */
+    outline: none; /* Remove default outline */
+}
+
+
 form button {
-    background-color: #5cb85c;
+    background-color: var(--primary-color);
     color: white;
-    padding: 10px 15px;
+    padding: 12px 20px; /* Increased padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px; /* Slightly more rounding */
     cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 form button:hover {
-    background-color: #4cae4c;
+    background-color: var(--secondary-color); /* Using secondary for hover */
+    transform: translateY(-2px); /* Slight lift on hover */
 }
 
 /* Utility classes */
@@ -155,71 +223,108 @@ form button:hover {
 }
 
 /* Course Detail Page Styles */
-.course-detail-container {
-    padding: 20px;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    background-color: #fff;
-}
+/* Duplicate .course-detail-container block removed. Styles are consolidated into the definition at line 133. */
 
 .course-detail-container h2 {
     margin-top: 0;
-    color: #333;
+    margin-bottom: 15px; /* Added margin */
+    color: var(--primary-color);
+    font-family: var(--font-heading);
+    font-size: 1.8em; /* Larger heading */
 }
 
 .course-detail-container p {
-    line-height: 1.6;
-    margin-bottom: 10px;
+    line-height: 1.7; /* Slightly more line height */
+    margin-bottom: 12px; /* Adjusted margin */
+    color: var(--dark-neutral);
 }
 
 .course-detail-container strong {
-    color: #555;
+    color: var(--primary-color); /* Use primary color for emphasis */
+    font-weight: 600;
 }
 
 .course-detail-container #back-to-courses,
 .course-detail-container #view-lessons-btn,
 .course-detail-container #enroll-button {
-    background-color: #007bff;
     color: white;
-    padding: 10px 15px;
+    padding: 12px 20px; /* Consistent padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px; /* Consistent rounding */
     cursor: pointer;
     margin-right: 10px;
-    margin-top: 15px;
-    text-decoration: none; /* For button-like links */
-    display: inline-block; /* For button-like links */
+    margin-top: 20px; /* Increased margin */
+    text-decoration: none;
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.course-detail-container #back-to-courses:hover,
-.course-detail-container #view-lessons-btn:hover,
-.course-detail-container #enroll-button:hover {
-    background-color: #0056b3;
+/* Specific button colors */
+.course-detail-container #enroll-button {
+    background-color: var(--primary-color);
 }
+.course-detail-container #enroll-button:hover {
+    background-color: var(--accent-color);
+    color: var(--dark-neutral);
+    transform: translateY(-2px);
+}
+
+.course-detail-container #view-lessons-btn {
+    background-color: var(--secondary-color);
+}
+.course-detail-container #view-lessons-btn:hover {
+    background-color: var(--accent-color);
+    color: var(--dark-neutral);
+    transform: translateY(-2px);
+}
+
+.course-detail-container #back-to-courses {
+    background-color: var(--dark-neutral); /* Using dark neutral for less emphasis */
+}
+.course-detail-container #back-to-courses:hover {
+    background-color: var(--primary-color); /* Primary on hover for contrast */
+    transform: translateY(-2px);
+}
+
 
 .course-detail-container #lessons-list {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
+    margin-top: 30px; /* Increased margin */
+    padding-top: 20px; /* Increased padding */
+    border-top: 1px solid var(--light-neutral); /* Consistent border */
 }
 
 .course-detail-container #lessons-list h3 {
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Increased margin */
+    color: var(--secondary-color); /* Secondary color for this heading */
+    font-family: var(--font-heading);
+    font-size: 1.5em;
 }
 
-/* Style for view details button in course list */
-.view-details-btn {
-    background-color: #17a2b8;
+/* Style for view details button in course list AND view lessons button in dashboard */
+.view-details-btn,
+.course-actions .view-lessons-btn { /* Added .course-actions .view-lessons-btn */
+    background-color: var(--secondary-color);
     color: white;
-    padding: 8px 12px;
+    padding: 10px 18px; /* Increased padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px; /* Consistent rounding */
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Adjusted font size */
+    font-weight: 600;
+    text-align: center;
+    align-self: flex-start;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 5px; /* Added for spacing if buttons wrap */
+    display: inline-block; /* Ensure proper layout */
 }
 
-.view-details-btn:hover {
-    background-color: #138496;
+.view-details-btn:hover,
+.course-actions .view-lessons-btn:hover { /* Added .course-actions .view-lessons-btn */
+    background-color: var(--accent-color);
+    color: var(--dark-neutral);
+    transform: translateY(-1px);
 }
 
 .error {
@@ -235,25 +340,85 @@ form button:hover {
     border: 1px solid transparent; /* Base for border */
 }
 .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
 }
 .error-message { /* Specifically for enrollment/form errors */
-    background-color: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border-color: var(--error-border);
 }
 .info-message {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border-color: #bee5eb;
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-color: var(--info-border);
 }
 
 /* Disabled button styling enhancement */
 .disabled-button {
-    background-color: #ccc !important; /* Ensure override if other button styles are more specific */
-    color: #666 !important;
+    background-color: #B0B0B0 !important;
+    color: #707070 !important;
     cursor: not-allowed !important;
-    border-color: #bbb !important;
+    border-color: #A0A0A0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* General Action Buttons for Dashboard etc. */
+.action-button,
+#create-course-btn,
+#back-to-dashboard,
+#back-to-course-detail,
+#back-to-course-detail-error,
+#back-to-courses /* Added ID for Back to Courses button */ {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 5px; /* Add some margin for spacing */
+    text-decoration: none; /* In case it's an <a> styled as a button */
+    display: inline-block; /* Ensure proper layout */
+}
+
+.action-button:hover,
+#create-course-btn:hover,
+#back-to-dashboard:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* More specific dashboard action buttons if needed */
+.course-actions .action-button {
+    font-size: 0.85em; /* Slightly smaller for more buttons in a row */
+    padding: 8px 12px;
+}
+
+/* Style for Add Lesson, Edit Course, Delete Course buttons in dashboard */
+.course-actions .add-lesson-btn {
+    background-color: #28a745; /* Green for add */
+}
+.course-actions .add-lesson-btn:hover {
+    background-color: #218838;
+}
+
+.course-actions .edit-course-btn {
+    background-color: #ffc107; /* Yellow for edit */
+    color: var(--dark-neutral);
+}
+.course-actions .edit-course-btn:hover {
+    background-color: #e0a800;
+}
+
+.course-actions .delete-course-btn {
+    background-color: #dc3545; /* Red for delete */
+}
+.course-actions .delete-course-btn:hover {
+    background-color: #c82333;
 }
