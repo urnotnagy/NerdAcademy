@@ -81,5 +81,30 @@ namespace NerdAcademy.API.Controllers
 
             return Ok(_mapper.Map<EnrollmentReadDto>(e));
         }
+
+        // DELETE /api/enrollments/{id}
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            // 1) fetch the enrollment
+            var enrollment = await _svc.GetByIdAsync(id);
+            if (enrollment == null)
+                return NotFound();
+
+            // 2) check permissions
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var role = User.FindFirstValue("role");
+            if (role != "Admin" && enrollment.StudentId != userId)
+                return Forbid();
+
+            // 3) delete and return NoContent
+            await _svc.DeleteAsync(id);
+            return NoContent();
+        }
+
+
     }
 }

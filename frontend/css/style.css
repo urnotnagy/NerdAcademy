@@ -1,0 +1,259 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1em 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+    max-width: 1200px; /* Increased max-width for better space utilization */
+    width: 90%; /* Use a percentage for responsiveness */
+    margin: 20px auto;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px; /* Added some rounding */
+}
+
+/* Styles for course listings to make them more card-like and responsive */
+.course-list {
+    list-style: none;
+    padding: 0;
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    gap: 20px; /* Space between cards */
+    justify-content: center; /* Center cards if they don't fill the row */
+}
+
+.course-list li {
+    border: 1px solid #ddd;
+    margin-bottom: 10px; /* Retained for spacing if not using gap effectively */
+    padding: 20px; /* Increased padding */
+    border-radius: 8px; /* Rounded corners for cards */
+    background-color: #f9f9f9; /* Slight background for cards */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    width: calc(33.333% - 20px); /* Aim for 3 cards per row, adjusting for gap */
+    min-width: 280px; /* Minimum width for smaller screens / fewer items */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    display: flex;
+    flex-direction: column; /* Stack content vertically within the card */
+    justify-content: space-between; /* Push button to the bottom */
+}
+
+.course-list li h3 {
+    margin-top: 0;
+    color: #0056b3; /* Theme color for headings */
+}
+
+.course-list li p {
+    flex-grow: 1; /* Allow description to take available space */
+    margin-bottom: 15px;
+}
+
+
+/* Ensure course detail container also uses space well */
+.course-detail-container {
+    padding: 25px; /* Increased padding */
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+    margin-top: auto;
+}
+
+/* Basic styles for course listings */
+/* Basic styles for forms */
+form { /* Add some styling to forms themselves */
+    max-width: 600px; /* Limit form width */
+    margin: 20px auto; /* Center forms */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"],
+form textarea,
+form select {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #4cae4c;
+}
+
+/* Utility classes */
+.hidden {
+    display: none;
+}
+
+/* Course Detail Page Styles */
+.course-detail-container {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.course-detail-container h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.course-detail-container p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.course-detail-container strong {
+    color: #555;
+}
+
+.course-detail-container #back-to-courses,
+.course-detail-container #view-lessons-btn,
+.course-detail-container #enroll-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 15px;
+    text-decoration: none; /* For button-like links */
+    display: inline-block; /* For button-like links */
+}
+
+.course-detail-container #back-to-courses:hover,
+.course-detail-container #view-lessons-btn:hover,
+.course-detail-container #enroll-button:hover {
+    background-color: #0056b3;
+}
+
+.course-detail-container #lessons-list {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.course-detail-container #lessons-list h3 {
+    margin-bottom: 10px;
+}
+
+/* Style for view details button in course list */
+.view-details-btn {
+    background-color: #17a2b8;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.view-details-btn:hover {
+    background-color: #138496;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+/* Message Area Styling */
+.message-area {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid transparent; /* Base for border */
+}
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+.error-message { /* Specifically for enrollment/form errors */
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+.info-message {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+/* Disabled button styling enhancement */
+.disabled-button {
+    background-color: #ccc !important; /* Ensure override if other button styles are more specific */
+    color: #666 !important;
+    cursor: not-allowed !important;
+    border-color: #bbb !important;
+}
