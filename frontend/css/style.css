@@ -63,17 +63,39 @@ nav ul li {
 nav ul li a {
     color: var(--light-neutral);
     text-decoration: none;
-    font-weight: 500; /* Slightly bolder nav links */
-    padding: 0.5em 0.75em; /* Added padding for a button-like feel */
-    border-radius: 4px; /* Rounded corners for links */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    font-family: var(--font-body);
+    font-weight: 400; /* Normal weight for a cleaner hyperlink look */
+    padding: 0.5em 0.25em; /* Reduced padding, mainly for vertical spacing */
+    position: relative; /* For pseudo-element positioning */
+    transition: color 0.3s ease; /* Transition for text color if needed */
 }
 
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 100%; /* Full width to allow scaling from center */
+    height: 2px;
+    display: block;
+    margin-top: 3px; /* Space between text and underline */
+    left: 0; /* Align to the left of the link */
+    background: var(--accent-color); /* Underline color */
+    transform: scaleX(0); /* Initially scaled to 0 width */
+    transform-origin: center; /* Scale from the center */
+    transition: transform 0.3s ease;
+    -webkit-transition: transform 0.3s ease;
+}
+
+nav ul li a:hover::after,
+nav ul li a:focus::after {
+    transform: scaleX(1); /* Scale to full width on hover */
+    /* background: var(--accent-color); This is already set */
+}
+
+/* Optional: slightly change text color on hover for more feedback */
 nav ul li a:hover,
-nav ul li a:focus { /* Added focus state for accessibility */
-    background-color: var(--secondary-color); /* Using secondary for hover */
-    color: var(--light-neutral);
-    text-decoration: none; /* Remove underline on hover if background changes */
+nav ul li a:focus {
+    color: var(--accent-color); /* Change text color to accent on hover */
+    /* background-color: transparent; Remove any previous background hover */
 }
 
 main {
@@ -98,10 +120,10 @@ main {
 }
 
 .course-list li {
-    border: 1px solid var(--light-neutral); /* Softer border, or use accent color subtly */
-    padding: 25px; /* Increased padding */
+    border: 1px solid var(--secondary-color); /* Earthy border using secondary color */
+    padding: 20px; /* Consistent padding */
     border-radius: 12px; /* More rounding */
-    background-color: #ffffff; /* White background for cards to pop */
+    background-color: var(--light-neutral); /* Warmer background using light neutral */
     box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Enhanced shadow for depth */
     width: calc(33.333% - 25px); /* Adjusting for new gap */
     min-width: 300px; /* Slightly larger min-width */
@@ -119,17 +141,41 @@ main {
 
 .course-list li h3 {
     margin-top: 0;
-    margin-bottom: 10px; /* Added margin bottom */
+    margin-bottom: 15px; /* Increased margin bottom for better spacing */
     color: var(--primary-color);
     font-family: var(--font-heading);
-    font-size: 1.4em; /* Larger title */
+    font-size: 1.5em; /* Slightly larger title for more impact */
+    font-weight: 700; /* Ensure heading is bold */
 }
 
-.course-list li p {
-    flex-grow: 1;
+.course-list li p:first-of-type { /* Styles for the main description paragraph */
+    flex-grow: 1; /* Allows description to take space and push button down */
     margin-bottom: 20px; /* Increased margin */
-    line-height: 1.6; /* Improved readability */
+    line-height: 1.7; /* Improved readability */
     color: var(--dark-neutral);
+    font-family: var(--font-body); /* Ensure body font is used */
+}
+
+/* Styles for meta information paragraphs (e.g., price, duration, level) */
+.course-list li p:not(:first-of-type) {
+    font-family: var(--font-body);
+    font-size: 0.9em;
+    color: var(--dark-neutral);
+    line-height: 1.5;
+    margin-bottom: 8px; /* Tighter spacing for meta items */
+}
+
+.course-list li p:not(:first-of-type) strong {
+    font-weight: bold; /* Or 600 */
+    color: var(--primary-color); /* Use primary color for emphasis on labels */
+    margin-right: 0.5em;
+}
+
+/* Add a separator before the meta information block */
+.course-list li p:first-of-type + p {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--secondary-color); /* Subtle separator */
 }
 
 
@@ -309,26 +355,30 @@ form button:hover {
 /* Style for view details button in course list AND view lessons button in dashboard */
 .view-details-btn,
 .course-actions .view-lessons-btn { /* Added .course-actions .view-lessons-btn */
-    background-color: var(--secondary-color);
-    color: var(--dark-neutral); /* Changed from white for contrast with Beige */
-    padding: 10px 18px; /* Increased padding */
+    background-color: var(--primary-color); /* Primary color for more prominence */
+    color: var(--light-neutral); /* Light neutral text for contrast */
+    padding: 12px 20px; /* Increased padding for a more substantial button */
     border: none;
     border-radius: 6px; /* Consistent rounding */
     cursor: pointer;
+    font-family: var(--font-body); /* Ensure body font */
     font-size: 0.9em; /* Adjusted font size */
-    font-weight: 600;
+    font-weight: bold; /* Bolder text */
     text-align: center;
-    align-self: flex-start;
+    text-transform: uppercase; /* Professional touch */
+    letter-spacing: 0.5px; /* Improved letter spacing */
+    align-self: flex-start; /* Align to the start of the flex item (card) cross axis */
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px; /* Add some space above the button */
     margin-bottom: 5px; /* Added for spacing if buttons wrap */
     display: inline-block; /* Ensure proper layout */
 }
 
 .view-details-btn:hover,
 .course-actions .view-lessons-btn:hover { /* Added .course-actions .view-lessons-btn */
-    background-color: var(--accent-color);
-    color: var(--dark-neutral);
-    transform: translateY(-1px);
+    background-color: var(--accent-color); /* Accent color on hover for thematic consistency */
+    color: var(--dark-neutral); /* Ensure text color contrasts with accent */
+    transform: translateY(-2px); /* Subtle lift */
 }
 
 .error {
