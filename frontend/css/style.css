@@ -1,24 +1,28 @@
 :root {
-    --primary-color: #FF7F50; /* Bright Coral */
-    --secondary-color: #00BFFF; /* Deep Sky Blue */
-    --accent-color: #FFD700; /* Gold */
-    --light-neutral: #F8F8F8; /* Very Light Grey */
-    --dark-neutral: #2F4F4F; /* Dark Slate Gray */
+    /* Earthy & Professional Palette */
+    --primary-color: #556B2F; /* Dark Olive Green */
+    --secondary-color: #F5F5DC; /* Beige */
+    --accent-color: #B87333; /* Soft Copper */
+    
+    --light-neutral: #FAF0E6; /* Linen (Warm Off-White) */
+    --dark-neutral: #3D2B1F; /* Dark Charcoal Brown / Very Dark Brown */
 
-    --success-bg: #D4EDDA;
-    --success-text: #155724;
-    --success-border: #C3E6CB;
+    /* Feedback Colors - Adjusted for Earthy Theme */
+    --success-bg: #E0F2E9; /* Muted Green Background */
+    --success-text: #2E7D32; /* Darker Green Text */
+    --success-border: #A5D6A7; /* Softer Green Border */
 
-    --error-bg: #F8D7DA;
-    --error-text: #721C24;
-    --error-border: #F5C6CB;
+    --error-bg: #FFEBEE; /* Light Terracotta/Pinkish Background */
+    --error-text: #C62828; /* Deep Red/Brown Text */
+    --error-border: #EF9A9A; /* Softer Red/Brown Border */
 
-    --info-bg: #D1ECF1;
-    --info-text: #0C5460;
-    --info-border: #BEE5EB;
+    --info-bg: #E3F2FD; /* Light Desaturated Blue/Grey Background */
+    --info-text: #1E88E5; /* Muted Blue Text */
+    --info-border: #90CAF9; /* Softer Muted Blue Border */
 
-    --font-heading: 'Arial', sans-serif; /* Placeholder, can be updated */
-    --font-body: 'Arial', sans-serif; /* Placeholder, can be updated */
+    /* Professional Fonts */
+    --font-heading: 'Georgia', serif;
+    --font-body: 'Helvetica Neue', Arial, sans-serif;
 }
 body {
     font-family: var(--font-body);
@@ -201,7 +205,7 @@ form select:focus {
 
 form button {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--light-neutral); /* Use theme variable */
     padding: 12px 20px; /* Increased padding */
     border: none;
     border-radius: 6px; /* Slightly more rounding */
@@ -213,7 +217,7 @@ form button {
 }
 
 form button:hover {
-    background-color: var(--secondary-color); /* Using secondary for hover */
+    background-color: color-mix(in srgb, var(--primary-color) 85%, black); /* Darken primary */
     transform: translateY(-2px); /* Slight lift on hover */
 }
 
@@ -306,7 +310,7 @@ form button:hover {
 .view-details-btn,
 .course-actions .view-lessons-btn { /* Added .course-actions .view-lessons-btn */
     background-color: var(--secondary-color);
-    color: white;
+    color: var(--dark-neutral); /* Changed from white for contrast with Beige */
     padding: 10px 18px; /* Increased padding */
     border: none;
     border-radius: 6px; /* Consistent rounding */
@@ -373,7 +377,7 @@ form button:hover {
 #back-to-course-detail-error,
 #back-to-courses /* Added ID for Back to Courses button */ {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--light-neutral); /* Use theme variable */
     padding: 10px 15px;
     border: none;
     border-radius: 6px;
@@ -389,8 +393,11 @@ form button:hover {
 
 .action-button:hover,
 #create-course-btn:hover,
-#back-to-dashboard:hover {
-    background-color: var(--secondary-color);
+#back-to-dashboard:hover,
+#back-to-course-detail:hover, /* Ensure all buttons in this group are covered */
+#back-to-course-detail-error:hover,
+#back-to-courses:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 85%, black); /* Darken primary */
     transform: translateY(-2px);
 }
 
