@@ -66,34 +66,56 @@ export async function loadCourseDetailPage(courseId) {
     try {
         // Check cache first
         let course = Cache.coursesDetailCache[courseId];
+        const currentUserData = getCurrentUser(); // Use auth helper
+        
+        const promises = [];
+
         if (!course) {
-            course = await fetchData(`/Courses/${courseId}`);
-            if (course && course.id) {
-                Cache.updateCourseDetailInCache(course); // Update cache
-            } else {
-                 throw new Error(`Course with ID ${courseId} not found.`);
+            promises.push(
+                fetchData(`/Courses/${courseId}`).then(fetchedCourse => {
+                    if (fetchedCourse && fetchedCourse.id) {
+                        Cache.updateCourseDetailInCache(fetchedCourse);
+                        course = fetchedCourse; // Assign to the outer scope variable
+                    } else {
+                        throw new Error(`Course with ID ${courseId} not found.`);
+                    }
+                })
+            );
+        }
+
+        if (Cache.allTagsCache === null) {
+            promises.push(
+                fetchData('/Tags').then(tags => {
+                    Cache.setTagsCache(tags || []);
+                })
+            );
+        }
+
+        if (currentUserData && currentUserData.role === 'Student' && Cache.studentEnrollmentsCache === null) {
+            promises.push(
+                fetchData('/Enrollments').then(allEnrollments => {
+                    if (allEnrollments && Array.isArray(allEnrollments)) {
+                        Cache.setStudentEnrollmentsCache(allEnrollments.filter(e => e.studentId === currentUserData.id));
+                    } else {
+                        Cache.setStudentEnrollmentsCache([]);
+                        console.warn("Could not fetch student enrollments or none found.");
+                    }
+                })
+            );
+        }
+
+        if (promises.length > 0) {
+            await Promise.all(promises);
+        }
+        
+        // Ensure course is available after potential parallel fetch
+        if (!course) { // This can happen if it wasn't in cache and the fetch was part of promises
+            course = Cache.coursesDetailCache[courseId];
+            if (!course) { // Still not found, critical error
+                 throw new Error(`Course with ID ${courseId} could not be loaded.`);
             }
         }
        
-        const currentUserData = getCurrentUser(); // Use auth helper
-
-        // Fetch tags if not cached
-        if (Cache.allTagsCache === null) {
-            const tags = await fetchData('/Tags');
-            Cache.setTagsCache(tags || []); // Update cache, default to empty array
-        }
-
-        // Fetch student enrollments if needed
-        if (currentUserData && currentUserData.role === 'Student' && Cache.studentEnrollmentsCache === null) {
-            const allEnrollments = await fetchData('/Enrollments');
-            if (allEnrollments && Array.isArray(allEnrollments)) {
-                Cache.setStudentEnrollmentsCache(allEnrollments.filter(e => e.studentId === currentUserData.id));
-            } else {
-                Cache.setStudentEnrollmentsCache([]);
-                console.warn("Could not fetch student enrollments or none found.");
-            }
-        }
-
         // Process tags
         let courseTags = [];
         if (Cache.allTagsCache && Array.isArray(Cache.allTagsCache) && course.tagIds && Array.isArray(course.tagIds)) {

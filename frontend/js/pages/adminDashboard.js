@@ -5,6 +5,7 @@ import { getCourses, updateCourse, deleteCourse, getUsers } from '../api/apiServ
 import { displayError, createButton } from '../ui/domUtils.js';
 import { decodeJwt } from '../auth/jwtUtils.js'; // Assuming this is the correct function from jwtUtils
 import { getToken } from '../auth/auth.js'; // For checkAdminRole
+import { usersCache, updateUserInCache } from '../state/cache.js'; // Import cache utilities
 
 // Note: NerdAcademy.Config.jwtKey is used indirectly via getToken -> Config.jwtKey
 // If NerdAcademy.Config is needed directly, it should be imported from '../config.js'
@@ -60,23 +61,34 @@ export async function init() {
         if(coursesTableBody) coursesTableBody.innerHTML = '';
 
         try {
-            // Fetch all users first to create the instructor map
+            // Populate instructorMap from cache or fetch users
             if (instructorMap.size === 0) {
-                try {
-                    const users = await getUsers();
-                    if (users && users.length > 0) {
-                        users.forEach(user => {
-                            // Assuming user object has 'id' and 'name' or 'firstName'/'lastName'
-                            const displayName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim();
-                            if (user.id && displayName) {
-                                instructorMap.set(user.id, displayName);
-                            }
-                        });
+                if (usersCache && Object.keys(usersCache).length > 0) {
+                    console.log("Populating instructorMap from usersCache.");
+                    for (const userId in usersCache) {
+                        const user = usersCache[userId];
+                        const displayName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim();
+                        if (user.id && displayName) {
+                            instructorMap.set(user.id, displayName);
+                        }
                     }
-                } catch (userError) {
-                    console.error('Error fetching users for instructor mapping:', userError);
-                    // Continue without instructor names, or display a specific error
-                    displayError('Could not load instructor names. Displaying IDs instead.', document.getElementById('course-management'));
+                } else {
+                    console.log("usersCache is empty, fetching users from API.");
+                    try {
+                        const users = await getUsers();
+                        if (users && users.length > 0) {
+                            users.forEach(user => {
+                                const displayName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim();
+                                if (user.id && displayName) {
+                                    instructorMap.set(user.id, displayName);
+                                    updateUserInCache(user); // Update cache
+                                }
+                            });
+                        }
+                    } catch (userError) {
+                        console.error('Error fetching users for instructor mapping:', userError);
+                        displayError('Could not load instructor names. Displaying IDs instead.', document.getElementById('course-management'));
+                    }
                 }
             }
 
