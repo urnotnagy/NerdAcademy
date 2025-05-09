@@ -19,16 +19,18 @@ export async function loadCoursesPage() {
             // Cache course details fetched in the list view
             courses.forEach(course => Cache.updateCourseDetailInCache(course));
 
-            if (courses.length === 0) {
-                renderContent('<p>No courses available at the moment.</p>');
+            const publishedCourses = courses.filter(course => course.status === "Published");
+
+            if (publishedCourses.length === 0) {
+                renderContent('<p>No published courses available at the moment.</p>');
                 return;
             }
             let coursesHtml = '<h2>Available Courses</h2><ul class="course-list">';
-            courses.forEach(course => {
+            publishedCourses.forEach(course => {
                 coursesHtml += `
                     <li>
                         <h3>${course.title}</h3>
-                        <p>${course.description || 'No description available.'}</p>
+                        <p>${course.description && course.description.length > 500 ? course.description.substring(0, 500) + '...' : (course.description || 'No description available.')}</p>
                         <p>Price: $${course.price}</p>
                         <p>Duration: ${course.durationInWeeks} weeks</p>
                         <p>Level: ${course.level}</p>

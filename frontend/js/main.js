@@ -1,9 +1,10 @@
 // Main application entry point
 
-import { fetchData } from './api/apiService.js';
-import { decodeJwt, isTokenExpired } from './auth/jwtUtils.js';
-import { getCurrentUser, isLoggedIn, handleLogout, clearAuthData } from './auth/auth.js';
-import { renderContent, updateNavUI } from './ui/domUtils.js';
+import { fetchData } from './api/apiService.js'; // IIFE populates NerdAcademy.ApiService
+import { decodeJwt, isTokenExpired } from './auth/jwtUtils.js'; // IIFE populates NerdAcademy.jwtUtils
+import { renderContent } from './ui/domUtils.js'; // IIFE populates NerdAcademy.domUtils. Import before auth.js
+// Import handleAuthStatus as well
+import { getCurrentUser, isLoggedIn, handleLogout, clearAuthData, handleAuthStatus } from './auth/auth.js'; // IIFE depends on the above
 import * as Cache from './state/cache.js';
 import { loadLoginPage, loadRegisterPage } from './pages/authPages.js';
 import { loadCoursesPage, loadCourseDetailPage } from './pages/courses.js';
@@ -68,7 +69,7 @@ const navCallbacks = {
 
 function onLoginSuccess(userDetails) {
     console.log("Login successful, user details fetched:", userDetails);
-    updateNavUI(userDetails, navCallbacks); // Update nav with user info
+    handleAuthStatus(navCallbacks); // Use centralized auth status handler
     // Decide where to navigate after login (e.g., dashboard or courses)
     if (userDetails.role === 'Instructor') {
         navigateTo(loadInstructorDashboard);
@@ -88,7 +89,7 @@ function onRegisterSuccess() {
 function onLogoutSuccess() {
     console.log("Logout successful callback triggered.");
     Cache.clearAllCaches(); // Clear caches on logout
-    updateNavUI(null, navCallbacks); // Update nav to logged-out state
+    handleAuthStatus(navCallbacks); // Use centralized auth status handler
     navigateTo(loadLoginPage, [onLoginSuccess, onAuthError]); // Redirect to login page
 }
 
@@ -108,7 +109,7 @@ async function checkInitialAuthStatus() {
 
     if (token && user && !isTokenExpired(token)) {
         console.log("User is logged in from previous session.");
-        updateNavUI(user, navCallbacks);
+        handleAuthStatus(navCallbacks); // Use centralized auth status handler
 
         // Pre-fetch student enrollments if applicable
         if (user.role === 'Student') {
@@ -133,7 +134,7 @@ async function checkInitialAuthStatus() {
         if (token) { // If token exists but user data is bad or token expired
             clearAuthData(); // Clean up inconsistent state
         }
-        updateNavUI(null, navCallbacks); // Ensure logged-out UI
+        handleAuthStatus(navCallbacks); // Use centralized auth status handler
         navigateTo(loadCoursesPage); // Load default public page
     }
 }

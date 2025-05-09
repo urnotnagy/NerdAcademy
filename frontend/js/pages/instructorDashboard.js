@@ -34,18 +34,20 @@ export async function loadInstructorDashboard() {
 
     // Fetch all courses and filter by instructorId
     try {
-        console.log("Attempting to fetch courses for Instructor Dashboard..."); 
-        const allCourses = await fetchData('/Courses'); 
-        console.log("Fetched courses data:", allCourses); 
-        
+        console.log("Attempting to fetch courses for Instructor Dashboard...");
+        const allCourses = await fetchData('/Courses'); // Old endpoint
+        // const instructorCourses = await fetchData('/Courses/mycourses'); // New endpoint
+        console.log("Fetched courses data:", allCourses);
+
         if (!allCourses || !Array.isArray(allCourses)) {
-            console.error("Failed to fetch courses or response was not an array:", allCourses); 
-            instructorCoursesListDiv.innerHTML = '<p>Could not load courses.</p>';
+            console.error("Failed to fetch courses or response was not an array:", allCourses);
+            instructorCoursesListDiv.innerHTML = '<p>Could not load your courses.</p>';
             return;
         }
 
+        // Filter client-side
         const instructorCourses = allCourses.filter(course => course.instructorId === currentUser.id);
-        console.log("Filtered instructor courses:", instructorCourses); 
+        console.log("Filtered instructor courses:", instructorCourses);
 
         if (instructorCourses.length === 0) {
             instructorCoursesListDiv.innerHTML = '<p>You have not created any courses yet.</p>';
@@ -139,10 +141,10 @@ export async function loadCreateCourseForm() {
         <select id="course-level" name="level" required>
             ${levelOptions.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('')}
         </select>`;
-    const statusDropdownHtml = `
-        <select id="course-status" name="status" required>
-             ${statusOptions.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('')}
-        </select>`;
+    // const statusDropdownHtml = `
+    //     <select id="course-status" name="status" required>
+    //          ${statusOptions.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('')}
+    //     </select>`;
 
     // Generate HTML for tag checkboxes
     let tagsCheckboxesHtml = '<p>No tags available.</p>';
@@ -157,12 +159,20 @@ export async function loadCreateCourseForm() {
     renderContent(`
         <h2>Create New Course</h2>
         <form id="create-course-form">
-             <div><label for="course-title">Title:</label><input type="text" id="course-title" name="title" required></div>
-             <div><label for="course-desc">Description:</label><textarea id="course-desc" name="description"></textarea></div>
+             <div>
+                <label for="course-title">Title:</label>
+                <input type="text" id="course-title" name="title" required maxlength="150">
+                <small id="title-char-count">0/150</small>
+             </div>
+             <div>
+                <label for="course-desc">Description:</label>
+                <textarea id="course-desc" name="description" maxlength="2000"></textarea>
+                <small id="desc-char-count">0/2000</small>
+             </div>
              <div><label for="course-price">Price:</label><input type="number" step="0.01" id="course-price" name="price" required></div>
              <div><label for="course-duration">Duration (Weeks):</label><input type="number" id="course-duration" name="durationInWeeks" required></div>
              <div><label for="course-level">Level:</label>${levelDropdownHtml}</div>
-             <div><label for="course-status">Status:</label>${statusDropdownHtml}</div>
+             {/* Status field removed - will be set to Draft by default */}
              <fieldset>
                  <legend>Tags:</legend>
                  <div class="tags-checkbox-group">${tagsCheckboxesHtml}</div>
@@ -177,6 +187,22 @@ export async function loadCreateCourseForm() {
     const form = document.getElementById('create-course-form');
     if (form) {
         form.addEventListener('submit', handleCreateCourse);
+
+        const titleInput = document.getElementById('course-title');
+        const descriptionInput = document.getElementById('course-desc');
+        const titleCharCount = document.getElementById('title-char-count');
+        const descCharCount = document.getElementById('desc-char-count');
+
+        if (titleInput && titleCharCount) {
+            titleInput.addEventListener('input', () => {
+                titleCharCount.textContent = `${titleInput.value.length}/150`;
+            });
+        }
+        if (descriptionInput && descCharCount) {
+            descriptionInput.addEventListener('input', () => {
+                descCharCount.textContent = `${descriptionInput.value.length}/2000`;
+            });
+        }
     }
 }
 
@@ -358,13 +384,14 @@ async function handleCreateCourse(event) {
         price: parseFloat(form.price.value),
         durationInWeeks: parseInt(form.durationInWeeks.value, 10),
         level: parseInt(form.level.value, 10), // Get value from level dropdown
-        status: parseInt(form.status.value, 10), // Get value from status dropdown
+        status: 0, // Default status to "Draft" (0)
         tagIds: selectedTagIds // Use collected tag IDs
     };
 
     // Basic client-side validation example (can be expanded)
-    if (isNaN(courseData.price) || isNaN(courseData.durationInWeeks) || isNaN(courseData.level) || isNaN(courseData.status)) {
-         messageDiv.textContent = 'Please ensure Price, Duration, Level, and Status are valid numbers.';
+    // Status is no longer part of form validation as it's defaulted
+    if (isNaN(courseData.price) || isNaN(courseData.durationInWeeks) || isNaN(courseData.level)) {
+         messageDiv.textContent = 'Please ensure Price, Duration, and Level are valid numbers.';
          messageDiv.className = 'message-area error-message';
          return; // Stop submission
     }

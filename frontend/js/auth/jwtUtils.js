@@ -39,3 +39,11 @@ export function isTokenExpired(token, thresholdSeconds = 60) {
     const nowInSeconds = Math.floor(Date.now() / 1000);
     return payload.exp < (nowInSeconds + thresholdSeconds);
 }
+
+// --- Start of NerdAcademy.jwtUtils namespace population ---
+window.NerdAcademy = window.NerdAcademy || {};
+window.NerdAcademy.jwtUtils = {
+    decodeJwt, //: decodeJwt, // if function name was different
+    isTokenExpired //: isTokenExpired
+};
+// --- End of NerdAcademy.jwtUtils namespace population ---

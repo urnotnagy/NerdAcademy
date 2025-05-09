@@ -1,8 +1,8 @@
 // Module for handling API interactions
 
-// Import the base URL from the config file.
-// Note the relative path '../config.js' because apiService.js is inside the 'api' subdirectory.
-import { API_BASE_URL } from '../config.js'; 
+// Use the globally available config.
+// import { API_BASE_URL } from '../config.js'; // No longer importing
+const API_BASE_URL = window.NerdAcademy.Config.API_BASE_URL;
 
 /**
  * Fetches data from the backend API.
@@ -67,3 +67,168 @@ export async function fetchData(endpoint, options = {}) {
         throw error; // Re-throw the error to be caught by the calling function
     }
 }
+
+// --- Start of NerdAcademy.ApiService namespace population ---
+window.NerdAcademy = window.NerdAcademy || {};
+window.NerdAcademy.ApiService = (function() {
+    // Course specific API calls
+    async function getCourses() {
+        return fetchData('/Courses');
+    }
+
+    async function getCourseById(courseId) {
+        return fetchData(`/Courses/${courseId}`);
+    }
+
+    async function createCourse(courseData) {
+        return fetchData('/Courses', {
+            method: 'POST',
+            body: JSON.stringify(courseData)
+        });
+    }
+
+    async function updateCourse(courseId, courseData) {
+        return fetchData(`/Courses/${courseId}`, {
+            method: 'PUT',
+            body: JSON.stringify(courseData)
+        });
+    }
+
+    async function deleteCourse(courseId) {
+        return fetchData(`/Courses/${courseId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    // User/Auth specific API calls
+    async function loginUser(credentials) {
+        return fetchData('/Users/login', {
+            method: 'POST',
+            body: JSON.stringify(credentials)
+        });
+    }
+
+    async function registerUser(userData) {
+        return fetchData('/Users/register', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        });
+    }
+
+    async function getCurrentUserProfile() {
+        // As discussed, direct /me endpoint is not available. Role is from JWT.
+        return Promise.reject(new Error("No /me endpoint defined for profile fetching. Use JWT."));
+    }
+
+    async function getUsers() { // Added getUsers function
+        return fetchData('/Users');
+    }
+ 
+    // Enrollment specific API calls
+    async function enrollInCourse(courseId) {
+        return fetchData('/Enrollments', {
+            method: 'POST',
+            body: JSON.stringify({ courseId: courseId })
+        });
+    }
+
+    async function getStudentEnrollments() {
+        return Promise.reject(new Error("No dedicated student enrollments endpoint defined."));
+    }
+
+    // Lesson specific API calls
+    async function getLessonsForCourse(courseId) {
+        return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
+    }
+
+    return {
+        fetchData, // Expose the generic fetchData as well if needed directly
+        getCourses,
+        getCourseById,
+        createCourse,
+        updateCourse,
+        deleteCourse,
+        loginUser,
+        registerUser,
+        getCurrentUserProfile,
+        getUsers, // Added getUsers to IIFE return
+        enrollInCourse,
+        getStudentEnrollments,
+        getLessonsForCourse
+    };
+})();
+// --- End of NerdAcademy.ApiService namespace population ---
+
+
+// ES6 Exports (can co-exist for future module system adoption)
+// Course specific API calls
+export async function getCourses() {
+    return fetchData('/Courses');
+}
+
+export async function getCourseById(courseId) {
+    return fetchData(`/Courses/${courseId}`);
+}
+
+export async function createCourse(courseData) {
+    return fetchData('/Courses', {
+        method: 'POST',
+        body: JSON.stringify(courseData)
+    });
+}
+
+export async function updateCourse(courseId, courseData) {
+    return fetchData(`/Courses/${courseId}`, {
+        method: 'PUT',
+        body: JSON.stringify(courseData)
+    });
+}
+
+export async function deleteCourse(courseId) {
+    return fetchData(`/Courses/${courseId}`, {
+        method: 'DELETE'
+    });
+}
+
+// User/Auth specific API calls
+export async function loginUser(credentials) {
+    return fetchData('/Users/login', {
+        method: 'POST',
+        body: JSON.stringify(credentials)
+    });
+}
+
+export async function registerUser(userData) {
+    return fetchData('/Users/register', {
+        method: 'POST',
+        body: JSON.stringify(userData)
+    });
+}
+
+export async function getCurrentUserProfile() {
+    return Promise.reject(new Error("No /me endpoint defined for profile fetching. Use JWT."));
+}
+
+export async function getUsers() { // Added getUsers ES6 export
+    return fetchData('/Users');
+}
+ 
+ 
+// Enrollment specific API calls
+export async function enrollInCourse(courseId) {
+    return fetchData('/Enrollments', {
+        method: 'POST',
+        body: JSON.stringify({ courseId: courseId })
+    });
+}
+
+export async function getStudentEnrollments() {
+    return Promise.reject(new Error("No dedicated student enrollments endpoint defined."));
+}
+
+// Lesson specific API calls
+export async function getLessonsForCourse(courseId) {
+    return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
+}
+
+// Add other API functions as needed (e.g., for Tags, Payments, etc.)
