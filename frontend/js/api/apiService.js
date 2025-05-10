@@ -141,6 +141,23 @@ window.NerdAcademy.ApiService = (function() {
         return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
     }
 
+    async function getLessonById(lessonId) {
+        return fetchData(`/Lessons/${lessonId}`);
+    }
+
+    async function updateLesson(lessonId, lessonData) {
+        return fetchData(`/Lessons/${lessonId}`, {
+            method: 'PUT',
+            body: JSON.stringify(lessonData)
+        });
+    }
+
+    async function deleteLesson(lessonId) { // Added to IIFE
+        return fetchData(`/Lessons/${lessonId}`, {
+            method: 'DELETE'
+        });
+    }
+
     return {
         fetchData, // Expose the generic fetchData as well if needed directly
         getCourses,
@@ -154,7 +171,10 @@ window.NerdAcademy.ApiService = (function() {
         getUsers, // Added getUsers to IIFE return
         enrollInCourse,
         getStudentEnrollments,
-        getLessonsForCourse
+        getLessonsForCourse,
+        getLessonById,
+        updateLesson,
+        deleteLesson
     };
 })();
 // --- End of NerdAcademy.ApiService namespace population ---
@@ -231,4 +251,20 @@ export async function getLessonsForCourse(courseId) {
     return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
 }
 
+export async function getLessonById(lessonId) {
+    return fetchData(`/Lessons/${lessonId}`);
+}
+
+export async function updateLesson(lessonId, lessonData) {
+    return fetchData(`/Lessons/${lessonId}`, {
+        method: 'PUT',
+        body: JSON.stringify(lessonData)
+    });
+}
+
+export async function deleteLesson(lessonId) {
+    return fetchData(`/Lessons/${lessonId}`, {
+        method: 'DELETE'
+    });
+}
 // Add other API functions as needed (e.g., for Tags, Payments, etc.)
