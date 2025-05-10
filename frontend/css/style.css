@@ -605,3 +605,91 @@ table.styled-table td .action-button {
     font-style: italic;
     color: var(--dark-neutral);
 }
+/* Lesson Viewing Styles */
+.lesson-list.clickable-lesson-list .lesson-item {
+    cursor: pointer;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.lesson-list.clickable-lesson-list .lesson-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+.lesson-view-container {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.lesson-content-area {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+}
+
+.lesson-video-area {
+    margin-bottom: 20px;
+}
+
+.video-responsive {
+    overflow: hidden;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    position: relative;
+    height: 0;
+}
+
+.video-responsive iframe,
+.video-responsive video {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border: none; /* Remove border from iframe */
+}
+
+.lesson-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+}
+
+.lesson-navigation button {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.lesson-navigation button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Ensure buttons in course details and lesson lists are distinct */
+#view-lessons-btn, #back-to-course-detail, #back-to-lessons-list, #prev-lesson-btn, #next-lesson-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#view-lessons-btn:hover, #back-to-course-detail:hover, #back-to-lessons-list:hover, #prev-lesson-btn:hover:not(:disabled), #next-lesson-btn:hover:not(:disabled) {
+    background-color: #0056b3;
+}
