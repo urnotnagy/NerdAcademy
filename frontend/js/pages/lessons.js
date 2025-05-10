@@ -278,28 +278,29 @@ export async function loadCourseLessonsPage(courseId) {
         `;
 
         if (currentCourseLessons.length > 0) {
-            lessonsHtml += '<ul class="lesson-list">'; // Removed clickable-lesson-list, direct actions now
+            lessonsHtml += '<div class="lesson-list">'; // Changed ul to div, will style for vertical cards
             currentCourseLessons.forEach((lesson, index) => {
                 let actionButtonsHtml = '';
                 if (isInstructorOfCourse) {
                     actionButtonsHtml = `
-                        <div class="lesson-item-actions">
+                        <div class="lesson-card-actions">
                             <button class="action-button edit-lesson-list-btn" data-lesson-id="${lesson.id}" data-course-id="${courseId}">Edit</button>
                             <button class="action-button delete-lesson-list-btn" data-lesson-id="${lesson.id}" data-course-id="${courseId}" data-lesson-title="${lesson.title}">Delete</button>
                         </div>
                     `;
                 }
+                // Each lesson is now a div with class 'lesson-card'
                 lessonsHtml += `
-                    <li class="lesson-item">
-                        <div class="lesson-item-content" data-lesson-index="${index}" data-course-id="${courseId}">
+                    <div class="lesson-card">
+                        <div class="lesson-card-main-content" data-lesson-index="${index}" data-course-id="${courseId}">
                              <h3>${lesson.lessonNumber || lesson.order}. ${lesson.title}</h3>
-                             <p><em>Click to view details</em></p>
+                             <p class="lesson-card-description"><em>Click to view details</em></p>
                         </div>
                         ${actionButtonsHtml}
-                    </li>
+                    </div>
                 `;
             });
-            lessonsHtml += '</ul>';
+            lessonsHtml += '</div>';
         } else {
             lessonsHtml += '<p>No lessons found for this course.</p>';
         }
@@ -309,7 +310,7 @@ export async function loadCourseLessonsPage(courseId) {
         document.getElementById('back-to-course-detail').addEventListener('click', () => loadCourseDetailPage(courseId));
         
         // Event listener for viewing lesson details
-        document.querySelectorAll('.lesson-item-content').forEach(item => {
+        document.querySelectorAll('.lesson-card-main-content').forEach(item => {
             item.addEventListener('click', (event) => {
                 const targetDiv = event.currentTarget;
                 const lessonIndex = parseInt(targetDiv.dataset.lessonIndex, 10);
@@ -397,8 +398,8 @@ export async function loadEditLessonForm(courseId, lessonId) {
                 <button type="submit">Update Lesson</button>
             </form>
             <div id="edit-lesson-message" class="message-area"></div>
-            <button id="back-to-lesson-view">Back to Lesson</button>
-            <button id="back-to-lessons-list-from-edit">Back to Lessons List</button>
+            <button id="back-to-lesson-view" class="action-button">Back to Lesson</button>
+            <button id="back-to-lessons-list-from-edit" class="action-button">Back to Lessons List</button>
         `;
         renderContent(formHtml);
 

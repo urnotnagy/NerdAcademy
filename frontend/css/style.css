@@ -705,3 +705,77 @@ table.styled-table td .action-button {
     background-color: color-mix(in srgb, var(--primary-color) 85%, black); /* Darken primary on hover */
     transform: translateY(-2px); /* Slight lift effect */
 }
+/* Styles for Lesson Cards (Instructor View) */
+.lesson-list { /* This is the container for lesson cards */
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 20px; /* Space between cards */
+    padding: 0; /* Remove default padding if it was a ul */
+    list-style: none; /* Remove list styling if it was a ul */
+}
+
+.lesson-card {
+    background-color: var(--light-neutral);
+    border: 1px solid var(--secondary-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex; /* Use flex to align content and actions */
+    flex-direction: column; /* Default to column, but can be row for wider screens if needed */
+    justify-content: space-between;
+    width: 100%; /* Make cards take full width of their container */
+    box-sizing: border-box;
+}
+
+.lesson-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Slightly enhanced shadow on hover */
+}
+
+.lesson-card h3 {
+    margin-top: 0;
+    color: var(--text-color); /* Assuming a general text color variable */
+}
+
+.lesson-card-description {
+    color: var(--text-secondary); /* Assuming a secondary text color for descriptions */
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.lesson-card-main-content {
+    cursor: pointer; /* Indicate it's clickable to view details */
+    flex-grow: 1; /* Allow content to take available space */
+}
+
+.lesson-card-actions {
+    display: flex;
+    gap: 10px; /* Space between action buttons */
+    margin-top: 15px; /* Space above the action buttons */
+    align-self: flex-end; /* Align buttons to the right if card is flex container */
+}
+
+/* Ensure action buttons within cards are styled consistently */
+.lesson-card .action-button {
+    padding: 8px 15px;
+    /* Inherit general .action-button styles, or add specific overrides here if needed */
+}
+
+/* Responsive adjustments for lesson cards if needed */
+@media (min-width: 768px) {
+    .lesson-card {
+        /* Potentially change flex-direction to row if content and actions should be side-by-side */
+        /* flex-direction: row; */
+        /* align-items: center; */ /* Align items vertically if in a row */
+    }
+
+    .lesson-card-main-content {
+        /* Adjustments if layout changes to row */
+    }
+
+    .lesson-card-actions {
+        /* margin-top: 0; */ /* Remove top margin if side-by-side */
+        /* margin-left: auto; */ /* Push actions to the far right if in a row */
+    }
+}
