@@ -392,6 +392,17 @@ form button:hover {
     color: var(--dark-neutral); /* Ensure text color contrasts with accent */
     transform: translateY(-2px); /* Subtle lift */
 }
+/* Instructor Dashboard: Align VIEW LESSONS button font with other action buttons */
+.course-actions .view-lessons-btn {
+    font-family: var(--font-heading); /* Match other action buttons */
+    font-size: 0.85em;          /* Match .course-actions .action-button */
+    font-weight: 500;           /* Match .action-button */
+    text-transform: none;       /* Override .view-details-btn style */
+    letter-spacing: normal;     /* Override .view-details-btn style */
+    /* Other properties like background-color, padding, color, etc., are inherited
+       from the .view-details-btn, .course-actions .view-lessons-btn rule (lines 368-387)
+       or its hover state, preserving its distinct background. */
+}
 
 .error {
     color: red;
