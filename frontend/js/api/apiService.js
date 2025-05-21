@@ -174,7 +174,9 @@ window.NerdAcademy.ApiService = (function() {
         getLessonsForCourse,
         getLessonById,
         updateLesson,
-        deleteLesson
+        deleteLesson,
+        getEnrollments, // Added
+        deleteEnrollment // Added
     };
 })();
 // --- End of NerdAcademy.ApiService namespace population ---
@@ -246,6 +248,16 @@ export async function getStudentEnrollments() {
     return Promise.reject(new Error("No dedicated student enrollments endpoint defined."));
 }
 
+export async function getEnrollments() { // New function
+    return fetchData('/Enrollments');
+}
+
+export async function deleteEnrollment(enrollmentId) { // New function
+    return fetchData(`/Enrollments/${enrollmentId}`, {
+        method: 'DELETE'
+    });
+}
+
 // Lesson specific API calls
 export async function getLessonsForCourse(courseId) {
     return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
@@ -267,4 +279,5 @@ export async function deleteLesson(lessonId) {
         method: 'DELETE'
     });
 }
+
 // Add other API functions as needed (e.g., for Tags, Payments, etc.)

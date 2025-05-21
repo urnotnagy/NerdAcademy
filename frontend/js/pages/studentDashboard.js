@@ -110,7 +110,6 @@ export async function loadStudentDashboard() {
                 <p>${course.description ? (course.description.substring(0, 100) + (course.description.length > 100 ? '...' : '')) : 'No description.'}</p>
                 <p>Status: ${course.status || 'N/A'}</p> 
                 <button class="view-details-btn" data-course-id="${course.id}">View Course</button>
-                {/* TODO: Add 'View Lessons' button later */}
             </li>
         `;
     });

@@ -1,7 +1,7 @@
 // adminDashboard.js
 
 // Import dependencies
-import { getCourses, updateCourse, deleteCourse, getUsers } from '../api/apiService.js'; // Added getUsers
+import { getCourses, updateCourse, deleteCourse, getUsers, getEnrollments, deleteEnrollment } from '../api/apiService.js'; // Added getUsers, getEnrollments, deleteEnrollment
 import { displayError, createButton } from '../ui/domUtils.js';
 import { decodeJwt } from '../auth/jwtUtils.js'; // Assuming this is the correct function from jwtUtils
 import { getToken } from '../auth/auth.js'; // For checkAdminRole
@@ -14,15 +14,22 @@ import { usersCache, updateUserInCache } from '../state/cache.js'; // Import cac
 // but we will export an init function.
 
 const coursesTableBody = document.getElementById('courses-table-body');
-    const loadingMessage = document.getElementById('loading-message');
-    const noCoursesMessage = document.getElementById('no-courses-message');
-    const statusFilter = document.getElementById('status-filter');
-    const searchTermInput = document.getElementById('search-term');
-    const applyFiltersBtn = document.getElementById('apply-filters-btn');
+const loadingMessage = document.getElementById('loading-message');
+const noCoursesMessage = document.getElementById('no-courses-message');
+const statusFilter = document.getElementById('status-filter');
+const searchTermInput = document.getElementById('search-term');
+const applyFiltersBtn = document.getElementById('apply-filters-btn');
 
-    let allCourses = []; // To store all fetched courses for client-side filtering
-    let instructorMap = new Map(); // To store instructor ID to name mapping
- 
+// Enrollments elements
+const enrollmentsTableBody = document.getElementById('enrollments-table-body');
+const loadingEnrollmentsMessage = document.getElementById('loading-enrollments-message');
+const noEnrollmentsMessage = document.getElementById('no-enrollments-message');
+
+
+let allCourses = []; // To store all fetched courses for client-side filtering
+let instructorMap = new Map(); // To store instructor ID to name mapping (also used for student names)
+let allEnrollments = []; // To store all fetched enrollments
+
     // Export the init function so it can be called from admin.html
 export async function init() {
     if (!checkAdminRole()) {
@@ -30,6 +37,7 @@ export async function init() {
         displayError('Access Denied: You must be an admin to view this page.', document.querySelector('main.container'));
         // Optionally redirect: window.location.href = 'index.html';
         if(loadingMessage) loadingMessage.style.display = 'none';
+        if(loadingEnrollmentsMessage) loadingEnrollmentsMessage.style.display = 'none';
             return;
         }
 
@@ -38,6 +46,7 @@ export async function init() {
         }
         // Initial fetch
         await fetchAndDisplayCourses();
+        await fetchAndDisplayEnrollments(); // Fetch enrollments
     }
 
     function checkAdminRole() {
@@ -243,6 +252,81 @@ export async function init() {
         } catch (error) {
             console.error(`Error deleting course ${courseId}:`, error);
             alert(`Failed to delete course. ${error.message || ''}`);
+        }
+    }
+
+    // --- Enrollment Management Functions ---
+
+    async function fetchAndDisplayEnrollments() {
+        if (loadingEnrollmentsMessage) loadingEnrollmentsMessage.style.display = 'block';
+        if (noEnrollmentsMessage) noEnrollmentsMessage.style.display = 'none';
+        if (enrollmentsTableBody) enrollmentsTableBody.innerHTML = '';
+
+        try {
+            // Ensure users (for student names) and courses (for course titles) are loaded
+            // Users are loaded via instructorMap population in fetchAndDisplayCourses
+            // Courses are loaded into allCourses in fetchAndDisplayCourses
+            // If these are not guaranteed to be populated first, add explicit calls or checks here.
+            if (instructorMap.size === 0 || allCourses.length === 0) {
+                console.log("Waiting for users and courses to be loaded before fetching enrollments...");
+                // This assumes fetchAndDisplayCourses is called first and populates these.
+                // A more robust solution might involve promises or a loading state manager.
+            }
+
+            const enrollments = await getEnrollments();
+            allEnrollments = enrollments || [];
+
+            if (allEnrollments.length === 0) {
+                if (noEnrollmentsMessage) noEnrollmentsMessage.style.display = 'block';
+            } else {
+                renderEnrollments(allEnrollments);
+            }
+        } catch (error) {
+            console.error('Error fetching or processing enrollment data:', error);
+            displayError('Failed to load enrollments. Please try again.', document.getElementById('enrollment-management'));
+            if (noEnrollmentsMessage) noEnrollmentsMessage.style.display = 'block';
+        } finally {
+            if (loadingEnrollmentsMessage) loadingEnrollmentsMessage.style.display = 'none';
+        }
+    }
+
+    function renderEnrollments(enrollments) {
+        if (!enrollmentsTableBody) return;
+        enrollmentsTableBody.innerHTML = ''; // Clear existing rows
+
+        enrollments.forEach(enrollment => {
+            const row = enrollmentsTableBody.insertRow();
+            row.insertCell().textContent = enrollment.id;
+
+            const studentName = instructorMap.get(enrollment.studentId) || `Student ID: ${enrollment.studentId}`;
+            row.insertCell().textContent = studentName;
+
+            const course = allCourses.find(c => c.id === enrollment.courseId);
+            const courseTitle = course ? course.title : `Course ID: ${enrollment.courseId}`;
+            row.insertCell().textContent = courseTitle;
+
+            row.insertCell().textContent = new Date(enrollment.enrollmentDate).toLocaleDateString();
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('actions');
+
+            const deleteButton = createButton('Delete', async () => await deleteEnrollmentInternal(enrollment.id), 'button-delete');
+            actionsCell.appendChild(deleteButton);
+        });
+    }
+
+    async function deleteEnrollmentInternal(enrollmentId) {
+        if (!confirm(`Are you sure you want to delete enrollment ID ${enrollmentId}? This action cannot be undone.`)) {
+            return;
+        }
+        try {
+            await deleteEnrollment(enrollmentId);
+            allEnrollments = allEnrollments.filter(e => e.id !== enrollmentId);
+            renderEnrollments(allEnrollments); // Re-render enrollments
+            alert('Enrollment deleted successfully.');
+        } catch (error) {
+            console.error(`Error deleting enrollment ${enrollmentId}:`, error);
+            alert(`Failed to delete enrollment. ${error.message || ''}`);
         }
     }
 
