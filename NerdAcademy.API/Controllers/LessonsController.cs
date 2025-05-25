@@ -67,8 +67,16 @@ namespace NerdAcademy.API.Controllers
             }
 
             // authorized => return lessons
-            var lessons = await _lessonSvc.GetAllAsync(courseId);
-            return Ok(_mapper.Map<IEnumerable<LessonReadDto>>(lessons));
+            try
+            {
+                var lessons = await _lessonSvc.GetAllAsync(courseId, userId);
+                return Ok(_mapper.Map<IEnumerable<LessonReadDto>>(lessons));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Log the exception if needed
+                return StatusCode(403, ex.Message); // Or Forbid(ex.Message);
+            }
         }
 
 

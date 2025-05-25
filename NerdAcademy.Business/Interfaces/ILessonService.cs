@@ -9,7 +9,7 @@ namespace NerdAcademy.Business.Interfaces
 {
     public interface ILessonService
     {
-        Task<IEnumerable<Lesson>> GetAllAsync(Guid courseId);
+        Task<IEnumerable<Lesson>> GetAllAsync(Guid courseId, Guid studentId);
         Task<Lesson> GetByIdAsync(Guid id);
         Task<Lesson> CreateAsync(Lesson lesson);
         Task UpdateAsync(Lesson lesson);

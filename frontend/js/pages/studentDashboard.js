@@ -104,12 +104,21 @@ export async function loadStudentDashboard() {
 
     // Render the list
     resolvedCourses.forEach(course => {
+        // Find the corresponding enrollment to get the enrollmentStatus
+        const enrollment = Cache.studentEnrollmentsCache.find(e => e.courseId === course.id);
+        const enrollmentStatus = enrollment ? enrollment.enrollmentStatus : 'Unknown'; // Default if enrollment not found
+
+        const isApproved = enrollmentStatus === 'Approved';
+        const buttonDisabledAttribute = isApproved ? '' : 'disabled';
+        const buttonTitle = isApproved ? 'Access course content' : `Enrollment status: ${enrollmentStatus}. Access to course content is currently unavailable.`;
+        const buttonText = "View Course";
+
         coursesHtml += `
             <li>
                 <h3>${course.title}</h3>
                 <p>${course.description ? (course.description.substring(0, 100) + (course.description.length > 100 ? '...' : '')) : 'No description.'}</p>
-                <p>Status: ${course.status || 'N/A'}</p> 
-                <button class="view-details-btn" data-course-id="${course.id}">View Course</button>
+                <p>Enrollment Status: <strong class="status-${enrollmentStatus.toLowerCase()}">${enrollmentStatus}</strong></p>
+                <button class="view-details-btn" data-course-id="${course.id}" ${buttonDisabledAttribute} title="${buttonTitle}">${buttonText}</button>
             </li>
         `;
     });
@@ -120,7 +129,17 @@ export async function loadStudentDashboard() {
     enrolledCoursesListDiv.querySelectorAll('.view-details-btn').forEach(button => {
         button.addEventListener('click', (event) => {
             const courseId = event.target.dataset.courseId;
-            loadCourseDetailPage(courseId); // Use imported function
+            // Find the enrollment for this course
+            const enrollment = Cache.studentEnrollmentsCache.find(e => e.courseId === courseId);
+
+            if (enrollment && enrollment.enrollmentStatus === 'Approved') {
+                loadCourseDetailPage(courseId); // Use imported function
+            } else {
+                // Optionally, provide feedback if the button was somehow clicked despite being disabled
+                const status = enrollment ? enrollment.enrollmentStatus : 'Unknown';
+                console.warn(`Access to course ${courseId} is denied. Enrollment status: ${status}`);
+                alert(`Your enrollment for this course is currently "${status}". You cannot access the course content until your enrollment is "Approved".`);
+            }
         });
     });
 }

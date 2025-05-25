@@ -4,20 +4,42 @@
 // These will be replaced with actual imports once other files (main.js, page files) are refactored.
 
 // From main.js (or equivalent) - these need to be exported from there
+// Actual navigateTo function to load page content
+async function loadPage(htmlPath, jsInitFunction, ...args) {
+    const appContent = document.getElementById('app-content');
+    if (!appContent) {
+        console.error('Main content area #app-content not found.');
+        return;
+    }
+    try {
+        const response = await fetch(htmlPath);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch page: ${response.status} ${response.statusText}`);
+        }
+        const html = await response.text();
+        appContent.innerHTML = html;
+        if (jsInitFunction && typeof jsInitFunction === 'function') {
+            jsInitFunction(...args);
+        }
+    } catch (error) {
+        console.error(`Error loading page ${htmlPath}:`, error);
+        appContent.innerHTML = '<p>Error loading page content. Please try again later.</p>';
+    }
+}
+
 const navigateTo = (pageLoaderFn, args = []) => {
-    console.warn(`[Router STUB] navigateTo called for ${pageLoaderFn.name || 'anonymous loader'}. Args:`, args);
-    // This is a simplified version of the actual navigateTo from main.js
-    // The real navigateTo should handle rendering content.
+    console.log(`[Router] navigateTo called for ${pageLoaderFn.name || 'anonymous loader'}. Args:`, args);
     if (typeof pageLoaderFn === 'function') {
         try {
             pageLoaderFn(...args);
         } catch (error) {
-            console.error(`[Router STUB] Error in pageLoaderFn: ${error}`);
+            console.error(`[Router] Error in pageLoaderFn: ${error}`);
         }
     } else {
-        console.error('[Router STUB] pageLoaderFn is not a function in navigateTo');
+        console.error('[Router] pageLoaderFn is not a function in navigateTo');
     }
 };
+
 const onLoginSuccess = () => console.warn("[Router STUB] onLoginSuccess callback triggered.");
 const onAuthError = (err) => console.warn("[Router STUB] onAuthError callback triggered.", err);
 const onRegisterSuccess = () => console.warn("[Router STUB] onRegisterSuccess callback triggered.");
@@ -33,7 +55,43 @@ const loadAppropriateDashboard = () => console.warn("[Router STUB] loadAppropria
 const loadStudentDashboard = () => console.warn("[Router STUB] loadStudentDashboard called");
 const loadInstructorDashboard = () => console.warn("[Router STUB] loadInstructorDashboard called");
 const loadAdminDashboardPage = () => console.warn("[Router STUB] loadAdminDashboardPage called"); // New, for SPA admin view
-const loadNotFoundPage = () => console.warn("[Router STUB] loadNotFoundPage called");
+
+// Actual implementation for loading admin enrollments page
+const loadAdminEnrollmentsPage = async () => {
+    try {
+        // Dynamically import the init function from adminEnrollments.js
+        const { init: initAdminEnrollments } = await import('./pages/adminEnrollments.js');
+        await loadPage('admin-enrollments.html', initAdminEnrollments);
+    } catch (error) {
+        console.error('Failed to load admin enrollments page or its script:', error);
+        const appContent = document.getElementById('app-content');
+        if (appContent) {
+            appContent.innerHTML = '<p>Error loading admin enrollments page. Please try again later.</p>';
+        }
+    }
+};
+
+// Actual implementation for loading admin course-specific enrollments page
+const loadAdminCourseEnrollmentsPage = async (params) => {
+    try {
+        const { init: initAdminCourseEnrollments } = await import('./pages/adminCourseEnrollments.js');
+        await loadPage('admin-course-enrollments.html', () => initAdminCourseEnrollments(params));
+    } catch (error) {
+        console.error('Failed to load admin course enrollments page or its script:', error);
+        const appContent = document.getElementById('app-content');
+        if (appContent) {
+            appContent.innerHTML = '<p>Error loading admin course enrollments page. Please try again later.</p>';
+        }
+    }
+};
+
+const loadNotFoundPage = () => {
+    const appContent = document.getElementById('app-content');
+    if (appContent) {
+        appContent.innerHTML = '<h1>404 - Page Not Found</h1><p>The page you are looking for does not exist.</p>';
+    }
+    console.warn("[Router] loadNotFoundPage called");
+};
 
 
 // --- ROUTE DEFINITIONS ---
@@ -48,6 +106,8 @@ const routes = {
     '/dashboard/student': () => navigateTo(loadStudentDashboard),
     '/dashboard/instructor': () => navigateTo(loadInstructorDashboard),
     '/admin': () => navigateTo(loadAdminDashboardPage),
+    '/admin/enrollments': () => navigateTo(loadAdminEnrollmentsPage),
+    '/admin/courses/:courseId/enrollments': (params) => navigateTo(loadAdminCourseEnrollmentsPage, [params]),
     // Example for future admin sub-routes:
     // '/admin/users': (params) => navigateTo(loadAdminUsersPage, [params]),
 };
@@ -69,7 +129,17 @@ function extractParams(routePattern, actualPath) {
 }
 
 function resolveRoute() {
-    const path = window.location.pathname;
+    // Use location.hash for SPA routing if present, otherwise fallback to pathname
+    let path = window.location.hash.substring(1); // Remove #
+    if (!path || path === '/') { // if hash is empty or just '#/' or '#', use pathname for root or direct access
+        path = window.location.pathname;
+    }
+    // Ensure path starts with a / if it's not empty
+    if (path && !path.startsWith('/')) {
+        path = '/' + path;
+    }
+
+
     console.log(`[Router] Resolving route for path: ${path}`);
     let matchedRouteHandler = null;
     let extractedParams = {};
@@ -108,66 +178,76 @@ function resolveRoute() {
             matchedRouteHandler(extractedParams); // Pass extracted params to the handler
         } catch (error) {
             console.error(`[Router] Error executing route handler for ${path}:`, error);
-            // Optionally render a generic error page
             navigateTo(loadNotFoundPage);
         }
     } else {
         console.warn(`[Router] No route found for path: ${path}. Loading default/404 page.`);
-        navigateTo(loadNotFoundPage); // Fallback to a 404 page or a default page
+        navigateTo(loadNotFoundPage);
     }
 }
 
 function navigate(path, replace = false) {
-    if (window.location.pathname === path && !replace) {
-        console.log(`[Router] Already at path: ${path}. No navigation needed.`);
+    const currentHashPath = window.location.hash.substring(1);
+    const targetPath = path.startsWith('/') ? path : '/' + path; // Ensure path starts with /
+
+    if (currentHashPath === targetPath && !replace) {
+        console.log(`[Router] Already at hash path: ${targetPath}. No navigation needed.`);
         return;
     }
-    console.log(`[Router] Navigating to: ${path}, replace: ${replace}`);
+    console.log(`[Router] Navigating to hash path: ${targetPath}, replace: ${replace}`);
+
     if (replace) {
-        history.replaceState({ path }, '', path);
+        history.replaceState({ path: targetPath }, '', '#' + targetPath);
     } else {
-        history.pushState({ path }, '', path);
+        history.pushState({ path: targetPath }, '', '#' + targetPath);
     }
     resolveRoute(); // Manually trigger route resolution
 }
 
 function initializeRouter() {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log("[Router] Initializing router and resolving initial route.");
-        resolveRoute(); // Resolve initial route on page load
+    // This function is now called by main.js AFTER its DOMContentLoaded has fired.
+    // So, we can directly execute its logic without an additional DOMContentLoaded listener.
+    console.log("[Router] Initializing router and resolving initial route.");
+    resolveRoute(); // Resolve initial route on page load (hash or path based)
 
-        // Hijack link clicks to use the router
-        document.body.addEventListener('click', event => {
-            let targetElement = event.target;
-            // Traverse up if the click was on an element inside an <a> tag
-            while (targetElement && targetElement.tagName !== 'A') {
-                targetElement = targetElement.parentElement;
-            }
+    // Hijack link clicks to use the router
+    document.body.addEventListener('click', event => {
+        let targetElement = event.target;
+        while (targetElement && targetElement.tagName !== 'A') {
+            targetElement = targetElement.parentElement;
+        }
 
-            if (targetElement && targetElement.tagName === 'A') {
-                const href = targetElement.getAttribute('href');
-                // Check if it's an internal link (starts with /) and not an external one
-                if (href && href.startsWith('/') && !targetElement.hasAttribute('data-external') && !targetElement.hasAttribute('download')) {
-                    event.preventDefault(); // Prevent default browser navigation
-                    const targetPath = new URL(targetElement.href, window.location.origin).pathname;
+        if (targetElement && targetElement.tagName === 'A') {
+            const href = targetElement.getAttribute('href');
+            if (href && !targetElement.hasAttribute('data-external') && !targetElement.hasAttribute('download')) {
+                if (href.startsWith('#/')) { // SPA hash link
+                    event.preventDefault();
+                    const targetPath = href.substring(1); // Remove #
                     navigate(targetPath);
-                } else if (href && href.startsWith('#') && !targetElement.hasAttribute('data-external')) {
-                    // Handle fragment-only links if necessary, or let them behave normally
-                    // For now, let them behave normally if they are not caught by SPA routing.
-                    // If it's just '#', prevent default to avoid scrolling to top if not intended.
-                    if (href === '#') event.preventDefault();
+                } else if (href.startsWith('/')) { // Internal path link (less common for this setup now)
+                    event.preventDefault();
+                    navigate(href);
+                } else if (href === '#') { // Link to top of page
+                    event.preventDefault();
                 }
+                // External links or other special links will behave normally
             }
-        });
+        }
+    });
 
-        // Listen to popstate event for browser back/forward navigation
-        window.addEventListener('popstate', (event) => {
-            console.log("[Router] popstate event triggered. New path:", window.location.pathname, "State:", event.state);
-            resolveRoute();
-        });
+    // Listen to popstate event for browser back/forward navigation (handles hash changes)
+    window.addEventListener('popstate', (event) => {
+        console.log("[Router] popstate event triggered. New hash:", window.location.hash, "State:", event.state);
+        resolveRoute();
+    });
+
+    // Also listen to hashchange for direct hash modifications or older browser compatibility
+    window.addEventListener('hashchange', () => {
+        console.log("[Router] hashchange event triggered. New hash:", window.location.hash);
+        resolveRoute();
     });
     console.log("[Router] Router event listeners set up.");
 }
 
 // Export functions for use in other modules (e.g., main.js)
-export { navigate, initializeRouter };
+export { navigate, initializeRouter, loadPage }; // Export loadPage if it's to be used elsewhere

@@ -72,15 +72,15 @@ export async function handleEnrollment(courseId, messageDiv) {
             body: JSON.stringify(enrollmentData)
         });
 
-        if (response && response.id) { 
+        if (response && response.id) {
             if (enrollButton) {
-                enrollButton.textContent = 'Enrolled!';
-                enrollButton.disabled = true; 
+                enrollButton.textContent = 'Request Submitted';
+                enrollButton.disabled = true;
                 enrollButton.classList.add('disabled-button');
             }
             if (messageDiv) {
-                messageDiv.textContent = 'Successfully enrolled in the course!';
-                messageDiv.className = 'message-area success-message'; 
+                messageDiv.textContent = 'Your enrollment request has been submitted and is pending approval. You will be notified once it\'s reviewed.';
+                messageDiv.className = 'message-area success-message';
             }
             // Add to local cache
             const currentCache = Cache.studentEnrollmentsCache || [];

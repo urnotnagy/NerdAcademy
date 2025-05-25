@@ -136,6 +136,25 @@ window.NerdAcademy.ApiService = (function() {
         return Promise.reject(new Error("No dedicated student enrollments endpoint defined."));
     }
 
+    async function getManageableEnrollments() { // Renamed and endpoint updated
+        return fetchData('/Enrollments/manageable');
+    }
+
+    async function setEnrollmentStatus(enrollmentId, newStatus) { // New function
+        return fetchData(`/Enrollments/${enrollmentId}/status`, {
+            method: 'POST',
+            body: JSON.stringify({ status: newStatus })
+        });
+    }
+
+    async function approveEnrollment(enrollmentId) { // Updated to use setEnrollmentStatus
+        return setEnrollmentStatus(enrollmentId, "Approved");
+    }
+
+    async function rejectEnrollment(enrollmentId) { // Updated to use setEnrollmentStatus
+        return setEnrollmentStatus(enrollmentId, "Rejected");
+    }
+ 
     // Lesson specific API calls
     async function getLessonsForCourse(courseId) {
         return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));
@@ -176,7 +195,12 @@ window.NerdAcademy.ApiService = (function() {
         updateLesson,
         deleteLesson,
         getEnrollments, // Added
-        deleteEnrollment // Added
+        getEnrollmentsByCourseId, // Added
+        deleteEnrollment, // Added
+        getManageableEnrollments, // Renamed
+        setEnrollmentStatus,    // Added
+        approveEnrollment,
+        rejectEnrollment
     };
 })();
 // --- End of NerdAcademy.ApiService namespace population ---
@@ -258,6 +282,29 @@ export async function deleteEnrollment(enrollmentId) { // New function
     });
 }
 
+export async function getEnrollmentsByCourseId(courseId) { // New function
+    return fetchData(`/Enrollments/course/${courseId}`);
+}
+
+export async function getManageableEnrollments() { // Renamed and endpoint updated
+    return fetchData('/Enrollments/manageable');
+}
+
+export async function setEnrollmentStatus(enrollmentId, newStatus) { // New function
+    return fetchData(`/Enrollments/${enrollmentId}/status`, {
+        method: 'POST',
+        body: JSON.stringify({ status: newStatus })
+    });
+}
+
+export async function approveEnrollment(enrollmentId) { // Updated to use setEnrollmentStatus
+    return setEnrollmentStatus(enrollmentId, "Approved");
+}
+
+export async function rejectEnrollment(enrollmentId) { // Updated to use setEnrollmentStatus
+    return setEnrollmentStatus(enrollmentId, "Rejected");
+}
+ 
 // Lesson specific API calls
 export async function getLessonsForCourse(courseId) {
     return Promise.reject(new Error("No specific endpoint to get lessons by course ID."));

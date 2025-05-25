@@ -137,12 +137,56 @@ window.NerdAcademy.domUtils = (function() {
         return button;
     }
 
+    /**
+     * Displays a toast message.
+     * @param {string} message - The message to display.
+     * @param {'success'|'error'|'info'} type - The type of toast.
+     * @param {number} duration - How long the toast should be visible (in ms).
+     */
+    function showToast(message, type = 'info', duration = 3000) {
+        const toastContainer = document.getElementById('toast-container') || createToastContainer();
+        
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+
+        toastContainer.appendChild(toast);
+
+        // Trigger reflow to enable CSS transition
+        toast.offsetHeight;
+
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode === toastContainer) {
+                    toastContainer.removeChild(toast);
+                }
+                if (toastContainer.children.length === 0 && document.body.contains(toastContainer)) {
+                    document.body.removeChild(toastContainer);
+                }
+            }, 500); // Matches CSS transition time
+        }, duration);
+    }
+
+    function createToastContainer() {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        return container;
+    }
+
     return {
         renderContent,
         updateNavUI,
         createNavItem, // Expose if needed externally, though it's a helper for updateNavUI
         displayError,
-        createButton
+        createButton,
+        showToast // Expose showToast
     };
 })();
 
@@ -158,4 +202,7 @@ export function displayError(message, containerElement) {
 }
 export function createButton(text, onClickHandler, cssClasses = []) {
     return NerdAcademy.domUtils.createButton(text, onClickHandler, cssClasses);
+}
+export function showToast(message, type = 'info', duration = 3000) {
+    NerdAcademy.domUtils.showToast(message, type, duration);
 }

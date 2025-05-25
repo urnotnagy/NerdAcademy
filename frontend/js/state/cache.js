@@ -64,4 +64,30 @@ export function updateCourseDetailInCache(course) {
     }
 }
 
+/**
+ * Populates the usersCache by fetching all users from the API if the cache is empty.
+ * This is useful for having user details (like names) available globally.
+ */
+export async function populateUserCache() {
+    if (Object.keys(usersCache).length === 0) {
+        try {
+            // Dynamically import getUsers to avoid circular dependencies if cache.js is imported by apiService.js
+            const { getUsers } = await import('../api/apiService.js');
+            const users = await getUsers();
+            if (users && users.length > 0) {
+                users.forEach(user => {
+                    updateUserInCache(user);
+                });
+                console.log("User cache populated.");
+            }
+        } catch (error) {
+            console.error("Failed to populate user cache:", error);
+            // Depending on the app's needs, you might want to throw the error
+            // or handle it silently if the cache not being populated isn't critical immediately.
+        }
+    } else {
+        console.log("User cache is already populated.");
+    }
+}
+
 // Add more specific cache update/retrieval functions as needed.

@@ -1,11 +1,13 @@
 // adminDashboard.js
 
 // Import dependencies
-import { getCourses, updateCourse, deleteCourse, getUsers, getEnrollments, deleteEnrollment } from '../api/apiService.js'; // Added getUsers, getEnrollments, deleteEnrollment
+import { getCourses, updateCourse, deleteCourse, getUsers, getEnrollments, deleteEnrollment, getManageableEnrollments, approveEnrollment, rejectEnrollment } from '../api/apiService.js'; // Added getUsers, getEnrollments, deleteEnrollment, and new enrollment functions
 import { displayError, createButton } from '../ui/domUtils.js';
 import { decodeJwt } from '../auth/jwtUtils.js'; // Assuming this is the correct function from jwtUtils
 import { getToken } from '../auth/auth.js'; // For checkAdminRole
 import { usersCache, updateUserInCache } from '../state/cache.js'; // Import cache utilities
+// Removed: import { navigate } from '../router.js';
+// We will use direct window.location.href for navigating from admin.html to index.html SPA routes
 
 // Note: NerdAcademy.Config.jwtKey is used indirectly via getToken -> Config.jwtKey
 // If NerdAcademy.Config is needed directly, it should be imported from '../config.js'
@@ -25,6 +27,11 @@ const enrollmentsTableBody = document.getElementById('enrollments-table-body');
 const loadingEnrollmentsMessage = document.getElementById('loading-enrollments-message');
 const noEnrollmentsMessage = document.getElementById('no-enrollments-message');
 
+// Pending Enrollments elements - REMOVED as this functionality is moved
+// const pendingEnrollmentsTableBody = document.getElementById('pending-enrollments-table-body');
+// const loadingPendingEnrollmentsMessage = document.getElementById('loading-pending-enrollments-message');
+// const noPendingEnrollmentsMessage = document.getElementById('no-pending-enrollments-message');
+
 
 let allCourses = []; // To store all fetched courses for client-side filtering
 let instructorMap = new Map(); // To store instructor ID to name mapping (also used for student names)
@@ -38,6 +45,7 @@ export async function init() {
         // Optionally redirect: window.location.href = 'index.html';
         if(loadingMessage) loadingMessage.style.display = 'none';
         if(loadingEnrollmentsMessage) loadingEnrollmentsMessage.style.display = 'none';
+        // if(loadingPendingEnrollmentsMessage) loadingPendingEnrollmentsMessage.style.display = 'none'; // REMOVED
             return;
         }
 
@@ -46,7 +54,8 @@ export async function init() {
         }
         // Initial fetch
         await fetchAndDisplayCourses();
-        await fetchAndDisplayEnrollments(); // Fetch enrollments
+        await fetchAndDisplayEnrollments(); // Fetch existing enrollments
+        // await fetchAndDisplayPendingEnrollments(); // REMOVED - No longer fetching pending enrollments here
     }
 
     function checkAdminRole() {
@@ -186,6 +195,13 @@ export async function init() {
             // Use imported createButton
             const deleteButton = createButton('Delete', async () => await deleteCourseInternal(course.id), 'button-delete');
             actionsCell.appendChild(deleteButton);
+
+            // Add "View Enrollments" button
+            const viewEnrollmentsButton = createButton('Manage Enrollments', () => {
+                // Navigate to index.html with the specific hash for the SPA router to handle
+                window.location.href = `index.html#/admin/courses/${course.id}/enrollments`;
+            }, 'button-view-enrollments'); // Add a class for styling if needed
+            actionsCell.appendChild(viewEnrollmentsButton);
         });
     }
 
@@ -329,6 +345,11 @@ export async function init() {
             alert(`Failed to delete enrollment. ${error.message || ''}`);
         }
     }
+
+    // --- Pending Enrollment Management Functions --- REMOVED ---
+    // All functions related to fetchAndDisplayPendingEnrollments, renderPendingEnrollments,
+    // handleApproveEnrollment, and handleRejectEnrollment have been removed as this
+    // functionality is now handled in frontend/js/pages/adminEnrollments.js
 
 // No longer an IIFE, so no return statement like that.
 // The init function is exported.

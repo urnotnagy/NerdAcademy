@@ -16,5 +16,11 @@
         public DateTime? CompletedAt { get; set; }
         public decimal? Grade { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string EnrollmentStatus { get; set; }
+    }
+
+    public class EnrollmentStatusUpdateDto
+    {
+        public string Status { get; set; }
     }
 }

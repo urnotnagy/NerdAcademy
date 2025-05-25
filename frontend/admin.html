@@ -15,6 +15,7 @@
                 <ul class="navbar-nav">
                     <li><a href="index.html#courses">Courses</a></li>
                     <!-- "My Dashboard" link removed -->
+                    <li><a href="#/admin/enrollments">Manage Enrollments</a></li>
                     <!-- Dynamic nav links will be added by JS -->
                 </ul>
                 <div id="auth-links">
@@ -59,25 +60,6 @@
             <p id="no-courses-message" style="display:none;">No courses found.</p>
         </section>
 
-            <section id="enrollment-management" style="margin-top: 40px;">
-                <h2>Enrollment Management</h2>
-                <table id="enrollments-table" class="styled-table">
-                    <thead>
-                        <tr>
-                            <th>Enrollment ID</th>
-                            <th>Student Name</th>
-                            <th>Course Title</th>
-                            <th>Enrollment Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="enrollments-table-body">
-                        <!-- Enrollment rows will be populated by JS -->
-                    </tbody>
-                </table>
-                <p id="loading-enrollments-message">Loading enrollments...</p>
-                <p id="no-enrollments-message" style="display:none;">No enrollments found.</p>
-            </section>
         </div>
     </main>
 

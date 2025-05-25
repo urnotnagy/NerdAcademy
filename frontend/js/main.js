@@ -6,6 +6,7 @@ import { renderContent } from './ui/domUtils.js'; // IIFE populates NerdAcademy.
 // Import handleAuthStatus as well
 import { getCurrentUser, isLoggedIn, handleLogout, clearAuthData, handleAuthStatus } from './auth/auth.js'; // IIFE depends on the above
 import * as Cache from './state/cache.js';
+import { initializeRouter } from './router.js'; // Import the router initializer
 import { loadLoginPage, loadRegisterPage } from './pages/authPages.js';
 import { loadCoursesPage, loadCourseDetailPage } from './pages/courses.js';
 import { loadStudentDashboard } from './pages/studentDashboard.js';
@@ -21,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeApp() {
     // Initial UI setup
     setupNavigation();
-    checkInitialAuthStatus();
+    initializeRouter(); // Initialize the SPA router
+    checkInitialAuthStatus(); // Check auth status AFTER router is ready to handle potential hash
 }
 
 // --- Navigation & Routing ---
@@ -125,9 +127,12 @@ async function checkInitialAuthStatus() {
                  Cache.setStudentEnrollmentsCache([]);
             }
         }
-        // Load initial page for logged-in user (e.g., dashboard or courses)
-        navCallbacks.loadDashboard(); // Go to appropriate dashboard
-        // navigateTo(loadCoursesPage); // Or always start at courses
+        // If there's a hash, the router's resolveRoute (called during initializeRouter)
+        // should handle it. Otherwise, load default for logged-in user.
+        if (!window.location.hash || window.location.hash === "#") {
+            navCallbacks.loadDashboard(); // Go to appropriate dashboard
+        }
+        // If hash exists, router.js's resolveRoute will take over.
 
     } else {
         console.log("User is not logged in or session expired.");
@@ -135,6 +140,12 @@ async function checkInitialAuthStatus() {
             clearAuthData(); // Clean up inconsistent state
         }
         handleAuthStatus(navCallbacks); // Use centralized auth status handler
-        navigateTo(loadCoursesPage); // Load default public page
+        
+        // If there's a hash, let the router try to handle it (e.g. public course detail page)
+        // Otherwise, load default public page.
+        if (!window.location.hash || window.location.hash === "#") {
+            navigateTo(loadCoursesPage); // Load default public page
+        }
+        // If hash exists, router.js's resolveRoute will take over.
     }
 }
