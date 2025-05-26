@@ -135,7 +135,7 @@ export async function loadCourseDetailPage(courseId) {
                 <p><strong>Duration:</strong> ${course.durationInWeeks} weeks</p>
                 <p><strong>Level:</strong> ${course.level}</p>
                 <p><strong>Status:</strong> ${course.status}</p>
-                <p><strong>Instructor:</strong> ${instructorDisplay}</p>
+
                 <p><strong>Created At:</strong> ${new Date(course.createdAt).toLocaleDateString()}</p>
                 <p><strong>Tags:</strong> ${courseTags.length > 0 ? courseTags.join(', ') : 'No tags'}</p>
                 

@@ -70,7 +70,6 @@ export async function loadAddLessonForm(courseId) {
         const formContainer = document.getElementById('add-lesson-form-container');
         formContainer.innerHTML = `
             <form id="add-lesson-form">
-                 {/* Fields based on LessonCreateDto */}
                  <div><label for="lesson-title">Lesson Title:</label><input type="text" id="lesson-title" name="title" required></div>
                  <div><label for="lesson-content">Content:</label><textarea id="lesson-content" name="content"></textarea></div>
                  <div><label for="lesson-duration">Duration (Minutes):</label><input type="number" id="lesson-duration" name="durationInMinutes" required></div>

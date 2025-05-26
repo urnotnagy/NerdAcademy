@@ -172,7 +172,6 @@ export async function loadCreateCourseForm() {
              <div><label for="course-price">Price:</label><input type="number" step="0.01" id="course-price" name="price" required></div>
              <div><label for="course-duration">Duration (Weeks):</label><input type="number" id="course-duration" name="durationInWeeks" required></div>
              <div><label for="course-level">Level:</label>${levelDropdownHtml}</div>
-             {/* Status field removed - will be set to Draft by default */}
              <fieldset>
                  <legend>Tags:</legend>
                  <div class="tags-checkbox-group">${tagsCheckboxesHtml}</div>
@@ -269,7 +268,6 @@ async function loadEditCourseForm(courseId) {
     renderContent(`
         <h2>Edit Course: ${courseData.title}</h2>
         <form id="edit-course-form">
-             {/* Pre-fill form fields */}
              <div><label for="course-title">Title:</label><input type="text" id="course-title" name="title" value="${courseData.title || ''}" required></div>
              <div><label for="course-desc">Description:</label><textarea id="course-desc" name="description">${courseData.description || ''}</textarea></div>
              <div><label for="course-price">Price:</label><input type="number" step="0.01" id="course-price" name="price" value="${courseData.price || 0}" required></div>

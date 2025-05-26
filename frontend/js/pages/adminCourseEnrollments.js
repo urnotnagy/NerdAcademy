@@ -47,7 +47,6 @@ async function renderCourseEnrollments() {
 
                 row.insertCell().textContent = studentName;
                 row.insertCell().textContent = studentEmail;
-                row.insertCell().textContent = new Date(enrollment.enrollmentDate).toLocaleDateString();
 
                 const statusCell = row.insertCell();
                 const statusSelect = document.createElement('select');

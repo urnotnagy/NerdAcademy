@@ -23,7 +23,6 @@ async function renderEnrollments() {
                 row.insertCell().textContent = enrollment.id;
                 row.insertCell().textContent = enrollment.course?.title || 'N/A'; // Assuming course object with title
                 row.insertCell().textContent = enrollment.student?.userName || 'N/A'; // Assuming student object with name
-                row.insertCell().textContent = new Date(enrollment.enrollmentDate).toLocaleDateString();
                 
                 const statusCell = row.insertCell();
                 const statusSelect = document.createElement('select');
