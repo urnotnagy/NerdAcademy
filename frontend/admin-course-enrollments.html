@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Course Enrollments - NerdAcademy</title>
+    <!-- Assuming style.css is already linked in the main index.html or loaded by SPA shell -->
+</head>
+<body>
+    <div id="admin-course-enrollments-page" class="dashboard-container">
+        <h1 id="course-enrollment-title">Manage Enrollments for Course: <span id="course-name-placeholder">[Course Name]</span></h1>
+        <p><a href="#/admin" id="back-to-admin-dashboard">Back to Admin Dashboard</a></p>
+
+        <section id="enrollment-list-section">
+            <h2>Enrolled Students</h2>
+            <table id="course-enrollments-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Enrollment ID</th>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Current Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="course-enrollments-table-body">
+                    <!-- Enrollment rows will be populated by JS -->
+                </tbody>
+            </table>
+            <p id="loading-course-enrollments-message">Loading enrollments...</p>
+            <p id="no-course-enrollments-message" style="display:none;">No students are currently enrolled in this course, or enrollments are pending.</p>
+        </section>
+    </div>
+    <!-- Associated JS will be loaded by the router -->
+</body>
+</html>

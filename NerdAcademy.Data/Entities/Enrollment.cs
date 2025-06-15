@@ -28,6 +28,7 @@ namespace NerdAcademy.Data.Entities
 
         public DateTime CreatedAt { get; set; }
 
+public string EnrollmentStatus { get; set; }
         // Navigation
         public Payment Payment { get; set; }
     }

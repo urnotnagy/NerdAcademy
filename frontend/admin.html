@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NerdAcademy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Add any admin-specific CSS if needed later -->
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="index.html" class="navbar-brand">NerdAcademy</a>
+                <ul class="navbar-nav">
+                    <li><a href="index.html#courses">Courses</a></li>
+                    <!-- "My Dashboard" link removed -->
+                    <li><a href="#/admin/enrollments">Manage Enrollments</a></li>
+                    <!-- Dynamic nav links will be added by JS -->
+                </ul>
+                <div id="auth-links">
+                    <!-- Auth links will be populated by auth.js -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="admin-dashboard-page">
+        <div class="dashboard-container">
+            <h1>Admin Dashboard</h1>
+            <section id="course-management">
+                <!-- "Course Management" h2 removed -->
+                <div class="filters">
+                    <label for="status-filter">Filter by status:</label>
+                    <select id="status-filter">
+                        <option value="">All</option>
+                        <option value="Draft">Pending Approval (Draft)</option>
+                        <option value="Published">Published</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                    <input type="text" id="search-term" placeholder="Search by title...">
+                    <button id="apply-filters-btn" class="action-button">Apply Filters</button>
+                </div>
+                <table id="courses-table" class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                        <th>INSTRUCTOR NAME</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="courses-table-body">
+                    <!-- Course rows will be populated by JS -->
+                </tbody>
+            </table>
+            <p id="loading-message">Loading courses...</p>
+            <p id="no-courses-message" style="display:none;">No courses found.</p>
+        </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NerdAcademy. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts: Order is important for IIFE dependencies. Load as modules. -->
+    <script type="module" src="js/config.js"></script>
+    <script type="module" src="js/auth/jwtUtils.js"></script>
+    <script type="module" src="js/ui/domUtils.js"></script>
+    <script type="module" src="js/api/apiService.js"></script>
+    <script type="module" src="js/auth/auth.js"></script>
+    <script type="module" src="js/pages/adminDashboard.js"></script>
+    
+    <script type="module">
+        // Import necessary functions from the modules
+        import { handleAuthStatus } from './js/auth/auth.js';
+        import { init as initAdminDashboard } from './js/pages/adminDashboard.js';
+
+        // Initialize auth status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (handleAuthStatus) {
+                handleAuthStatus(); // Uses default nav callbacks from auth.js
+            } else {
+                console.error('handleAuthStatus function not imported correctly from auth.js.');
+            }
+            
+            // Specific initialization for admin page
+            if (initAdminDashboard) {
+                initAdminDashboard();
+            } else {
+                console.error('initAdminDashboard function not imported correctly from adminDashboard.js.');
+            }
+        });
+    </script>
+</body>
+</html>
